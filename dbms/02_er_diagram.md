@@ -2,7 +2,7 @@
 
 ## Visual ER Diagram
 
-![Pocket Phone ER Diagram](./er_diagram_pocket_phone.png)
+![Pocket Phone ER Diagram](./02_er_diagram.png)
 
 **Tagline**: *Buy • Sell • Review • Track - Your Trusted Phone Marketplace*
 
