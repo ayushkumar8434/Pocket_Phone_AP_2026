@@ -1,0 +1,109 @@
+.popular-section {
+  width: 100%;
+  padding: 54px clamp(20px, 4.2vw, 60px);
+  background: #fff;
+}
+
+.popular-header,
+.popular-availability {
+  width: min(1200px, 100%);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.popular-header {
+  margin-bottom: 24px;
+}
+
+.popular-label {
+  margin-bottom: 10px;
+  color: #16a34a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+}
+
+.popular-title {
+  margin: 0;
+  color: #0b3d2e;
+  font-size: clamp(30px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  line-height: 1.12;
+}
+
+.popular-description {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.popular-availability {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px clamp(20px, 3vw, 34px);
+  border: 1px solid #e4ede7;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 100% 0, rgba(220, 252, 231, 0.6), transparent 45%),
+    #f7faf8;
+}
+
+.availability-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border: 1px solid #ccebd6;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.availability-mark span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 5px #dcfce7;
+}
+
+.popular-availability h3 {
+  color: #0b3d2e;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.popular-availability p {
+  max-width: 650px;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .popular-section {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .popular-header {
+    margin-bottom: 19px;
+  }
+
+  .popular-availability {
+    align-items: flex-start;
+    gap: 14px;
+    padding: 19px 16px;
+  }
+
+  .availability-mark {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+}

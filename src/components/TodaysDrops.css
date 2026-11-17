@@ -1,0 +1,76 @@
+.drops-section {
+  width: 100%;
+  padding: 48px clamp(20px, 4.2vw, 60px);
+  background: #f7faf8;
+}
+
+.drops-header,
+.drops-availability {
+  width: min(1200px, 100%);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.drops-header {
+  margin-bottom: 20px;
+}
+
+.drops-label {
+  margin-bottom: 10px;
+  color: #16a34a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+}
+
+.drops-title {
+  margin: 0;
+  color: #0b3d2e;
+  font-size: clamp(29px, 3.8vw, 38px);
+  font-weight: 700;
+  letter-spacing: -1.1px;
+  line-height: 1.15;
+}
+
+.drops-availability {
+  display: flex;
+  min-height: 92px;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 22px;
+  border: 1px solid #e1e9e3;
+  border-radius: 15px;
+  background: #fff;
+}
+
+.drops-availability-index {
+  color: #16a34a;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 1px;
+}
+
+.drops-availability p {
+  max-width: 700px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+@media (max-width: 600px) {
+  .drops-section {
+    padding-top: 38px;
+    padding-bottom: 40px;
+  }
+
+  .drops-header {
+    margin-bottom: 17px;
+  }
+
+  .drops-availability {
+    min-height: 0;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 17px;
+  }
+}

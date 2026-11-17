@@ -1,0 +1,126 @@
+.brand-section {
+  width: 100%;
+  overflow: hidden;
+  padding: 56px 0 60px;
+  background: #f7faf8;
+}
+
+.brand-header {
+  margin: 0 20px 30px;
+  text-align: center;
+}
+
+.brand-label {
+  margin-bottom: 10px;
+  color: #16a34a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.7px;
+}
+
+.brand-title {
+  color: #0b3d2e;
+  font-size: clamp(30px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  line-height: 1.15;
+}
+
+.brand-description {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.brand-slider {
+  width: 100%;
+  overflow: hidden;
+}
+
+.brand-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 16px;
+  animation: brand-scroll 34s linear infinite;
+}
+
+.brand-item {
+  display: flex;
+  width: 144px;
+  min-height: 150px;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  border: 1px solid #e5ebe7;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(11, 61, 46, 0.035);
+}
+
+.brand-image {
+  display: grid;
+  width: 60px;
+  height: 60px;
+  place-items: center;
+  border: 1px solid #ccebd6;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f1fbf4, #dcfce7);
+  color: #0b3d2e;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.brand-name {
+  margin-top: 11px;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.brand-slider:hover .brand-track {
+  animation-play-state: paused;
+}
+
+@keyframes brand-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - 8px));
+  }
+}
+
+@media (max-width: 600px) {
+  .brand-section {
+    padding: 40px 0 44px;
+  }
+
+  .brand-header {
+    margin-bottom: 24px;
+  }
+
+  .brand-track {
+    gap: 12px;
+  }
+
+  .brand-item {
+    width: 126px;
+    min-height: 138px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-slider {
+    overflow-x: auto;
+  }
+
+  .brand-track {
+    animation: none;
+  }
+}
