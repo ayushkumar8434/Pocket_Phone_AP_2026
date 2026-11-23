@@ -1,0 +1,13 @@
+-- Query 49: Get a user's wishlist with current prices.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Nested loop left join  (cost=1.75 rows=1.01) (actual time=0.0323..0.0328 rows=1 loops=1)
+    -> Nested loop inner join  (cost=1.4 rows=1) (actual time=0.0269..0.0271 rows=1 loops=1)
+        -> Nested loop inner join  (cost=1.05 rows=1) (actual time=0.0244..0.0245 rows=1 loops=1)
+            -> Nested loop inner join  (cost=0.7 rows=1) (actual time=0.0215..0.0216 rows=1 loops=1)
+                -> Sort: w.added_date DESC  (cost=0.35 rows=1) (actual time=0.0175..0.0175 rows=1 loops=1)
+                    -> Index lookup on w using uk_user_listing (user_id = 3)  (cost=0.35 rows=1) (actual time=0.0138..0.0143 rows=1 loops=1)
+                -> Single-row index lookup on pl using PRIMARY (listing_id = w.listing_id)  (cost=0.35 rows=1) (actual time=0.00396..0.004 rows=1 loops=1)
+            -> Single-row index lookup on pm using PRIMARY (model_id = pl.model_id)  (cost=0.35 rows=1) (actual time=0.00283..0.00287 rows=1 loops=1)
+        -> Single-row index lookup on b using PRIMARY (brand_id = pm.brand_id)  (cost=0.35 rows=1) (actual time=0.00229..0.00233 rows=1 loops=1)
+    -> Index lookup on p using idx_pricing_listing_current (listing_id = w.listing_id, is_current = true)  (cost=0.352 rows=1.01) (actual time=0.005..0.00521 rows=1 loops=1)

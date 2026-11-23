@@ -1,0 +1,8 @@
+-- Query 38: Mark a listing sold only when it is still available or reserved.
+-- EXPLAIN on MySQL, sample data (see 05_query_timings.md)
+
++----+-------------+----------------+------------+-------+--------------------+---------+---------+-------+------+----------+-------------+
+| id | select_type | table          | partitions | type  | possible_keys      | key     | key_len | ref   | rows | filtered | Extra       |
++----+-------------+----------------+------------+-------+--------------------+---------+---------+-------+------+----------+-------------+
+|  1 | UPDATE      | Phone_Listings | NULL       | range | PRIMARY,idx_status | PRIMARY | 4       | const |    1 |   100.00 | Using where |
++----+-------------+----------------+------------+-------+--------------------+---------+---------+-------+------+----------+-------------+

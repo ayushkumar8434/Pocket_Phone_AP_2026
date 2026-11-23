@@ -1,0 +1,8 @@
+-- Query 36: Insert pricing for the listing just created in the session.
+-- EXPLAIN on MySQL, sample data (see 05_query_timings.md)
+
++----+-------------+---------+------------+------+---------------+------+---------+------+------+----------+-------+
+| id | select_type | table   | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra |
++----+-------------+---------+------------+------+---------------+------+---------+------+------+----------+-------+
+|  1 | INSERT      | Pricing | NULL       | ALL  | NULL          | NULL | NULL    | NULL | NULL |     NULL | NULL  |
++----+-------------+---------+------------+------+---------------+------+---------+------+------+----------+-------+

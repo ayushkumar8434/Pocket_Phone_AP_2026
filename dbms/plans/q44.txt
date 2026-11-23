@@ -1,0 +1,13 @@
+-- Query 44: Get today's available drops.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Nested loop inner join  (cost=74.2 rows=19.1) (actual time=0.114..0.308 rows=30 loops=1)
+    -> Nested loop inner join  (cost=67.5 rows=19) (actual time=0.108..0.224 rows=30 loops=1)
+        -> Nested loop inner join  (cost=60.8 rows=19) (actual time=0.105..0.197 rows=30 loops=1)
+            -> Nested loop inner join  (cost=54.2 rows=19) (actual time=0.101..0.189 rows=30 loops=1)
+                -> Filter: ((pl.listing_type = 'todays_drop') and (pl.`status` = 'available'))  (cost=47.5 rows=19) (actual time=0.0965..0.168 rows=30 loops=1)
+                    -> Index range scan on pl using idx_listing_date over ('2026-11-23 00:00:00' <= listing_date < '2026-11-24 00:00:00') (reverse), with index condition: ((pl.listing_date >= <cache>(curdate())) and (pl.listing_date < <cache>((curdate() + interval 1 day))))  (cost=47.5 rows=105) (actual time=0.04..0.161 rows=105 loops=1)
+                -> Single-row index lookup on pm using PRIMARY (model_id = pl.model_id)  (cost=0.255 rows=1) (actual time=608e-6..624e-6 rows=1 loops=30)
+            -> Single-row index lookup on b using PRIMARY (brand_id = pm.brand_id)  (cost=0.255 rows=1) (actual time=178e-6..193e-6 rows=1 loops=30)
+        -> Single-row index lookup on u using PRIMARY (user_id = pl.seller_id)  (cost=0.255 rows=1) (actual time=847e-6..861e-6 rows=1 loops=30)
+    -> Index lookup on p using idx_pricing_listing_current (listing_id = pl.listing_id, is_current = true)  (cost=0.257 rows=1.01) (actual time=0.00258..0.0027 rows=1 loops=30)

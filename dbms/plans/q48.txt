@@ -1,0 +1,13 @@
+-- Query 48: Get a user's selling history, including unsold listings.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Nested loop left join  (cost=5.28 rows=3.05) (actual time=0.0404..0.0607 rows=3 loops=1)
+    -> Nested loop left join  (cost=4.21 rows=3.02) (actual time=0.0316..0.0405 rows=3 loops=1)
+        -> Nested loop inner join  (cost=3.15 rows=3) (actual time=0.0258..0.0278 rows=3 loops=1)
+            -> Nested loop inner join  (cost=2.1 rows=3) (actual time=0.024..0.0258 rows=3 loops=1)
+                -> Sort: pl.listing_date DESC  (cost=1.05 rows=3) (actual time=0.0203..0.0205 rows=3 loops=1)
+                    -> Index lookup on pl using idx_seller (seller_id = 5)  (cost=1.05 rows=3) (actual time=0.0147..0.0154 rows=3 loops=1)
+                -> Single-row index lookup on pm using PRIMARY (model_id = pl.model_id)  (cost=0.283 rows=1) (actual time=0.00165..0.00169 rows=1 loops=3)
+            -> Single-row index lookup on b using PRIMARY (brand_id = pm.brand_id)  (cost=0.283 rows=1) (actual time=625e-6..653e-6 rows=1 loops=3)
+        -> Index lookup on p using idx_pricing_listing_current (listing_id = pl.listing_id, is_current = true)  (cost=0.285 rows=1.01) (actual time=0.00394..0.00411 rows=1 loops=3)
+    -> Index lookup on t using fk_transaction_listing (listing_id = pl.listing_id)  (cost=0.286 rows=1.01) (actual time=0.0064..0.00654 rows=1 loops=3)

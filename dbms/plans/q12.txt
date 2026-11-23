@@ -1,0 +1,14 @@
+-- Query 12: Search by brand, storage, and condition.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Sort: p.final_price  (actual time=28.5..28.5 rows=1500 loops=1)
+    -> Stream results  (cost=3853 rows=1003) (actual time=0.262..28.3 rows=1500 loops=1)
+        -> Nested loop inner join  (cost=3853 rows=1003) (actual time=0.261..28 rows=1500 loops=1)
+            -> Nested loop inner join  (cost=3502 rows=997) (actual time=0.256..25.9 rows=1500 loops=1)
+                -> Nested loop inner join  (cost=2107 rows=3987) (actual time=0.247..23.1 rows=6000 loops=1)
+                    -> Filter: ((pl.storage_capacity >= 128) and (pl.`condition` in ('new','like_new')))  (cost=711 rows=3987) (actual time=0.244..19.8 rows=6000 loops=1)
+                        -> Index lookup on pl using idx_status (status = 'available')  (cost=711 rows=29903) (actual time=0.243..17.9 rows=36000 loops=1)
+                    -> Single-row index lookup on pm using PRIMARY (model_id = pl.model_id)  (cost=0.25 rows=1) (actual time=467e-6..483e-6 rows=1 loops=6000)
+                -> Filter: (b.brand_name in ('Apple','Samsung'))  (cost=0.25 rows=0.25) (actual time=407e-6..418e-6 rows=0.25 loops=6000)
+                    -> Single-row index lookup on b using PRIMARY (brand_id = pm.brand_id)  (cost=0.25 rows=1) (actual time=293e-6..310e-6 rows=1 loops=6000)
+            -> Index lookup on p using idx_pricing_listing_current (listing_id = pl.listing_id, is_current = true)  (cost=0.252 rows=1.01) (actual time=0.0012..0.00132 rows=1 loops=1500)

@@ -1,0 +1,8 @@
+-- Query 33: Completed daily sales for the last 30 days.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Sort: sale_date DESC  (actual time=0.904..0.904 rows=10 loops=1)
+    -> Table scan on <temporary>  (actual time=0.899..0.9 rows=10 loops=1)
+        -> Aggregate using temporary table  (actual time=0.899..0.899 rows=10 loops=1)
+            -> Filter: (t.payment_status = 'completed')  (cost=608 rows=891) (actual time=0.129..0.737 rows=1050 loops=1)
+                -> Index range scan on t using idx_transaction_date over ('2026-10-24 00:00:00' <= transaction_date), with index condition: (t.transaction_date >= <cache>((curdate() - interval 30 day)))  (cost=608 rows=1350) (actual time=0.128..0.673 rows=1350 loops=1)

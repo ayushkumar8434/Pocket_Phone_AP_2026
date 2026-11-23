@@ -1,0 +1,11 @@
+-- Query 13: Count total, available, and sold listings by brand.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Sort: total_listings DESC  (actual time=26.6..26.6 rows=8 loops=1)
+    -> Table scan on <temporary>  (actual time=26.6..26.6 rows=8 loops=1)
+        -> Aggregate using temporary table  (actual time=26.6..26.6 rows=8 loops=1)
+            -> Nested loop left join  (cost=6371 rows=62339) (actual time=0.0187..8.05 rows=60000 loops=1)
+                -> Nested loop left join  (cost=40.6 rows=320) (actual time=0.0139..0.0631 rows=320 loops=1)
+                    -> Covering index scan on b using brand_name  (cost=1.05 rows=8) (actual time=0.00871..0.0108 rows=8 loops=1)
+                    -> Covering index lookup on pm using uk_brand_model (brand_id = b.brand_id)  (cost=1.45 rows=40) (actual time=0.00292..0.00521 rows=40 loops=8)
+                -> Covering index lookup on pl using idx_listing_model_status (model_id = pm.model_id)  (cost=0.364 rows=195) (actual time=0.0019..0.0193 rows=188 loops=320)

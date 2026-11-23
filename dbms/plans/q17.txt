@@ -1,0 +1,11 @@
+-- Query 17: Count users by city and state.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Sort: user_count DESC  (actual time=8.82..8.82 rows=30 loops=1)
+    -> Table scan on <temporary>  (actual time=8.81..8.81 rows=30 loops=1)
+        -> Aggregate using temporary table  (actual time=8.81..8.81 rows=30 loops=1)
+            -> Nested loop left join  (cost=2011 rows=19916) (actual time=0.0224..2.17 rows=20000 loops=1)
+                -> Nested loop inner join  (cost=7.5 rows=30) (actual time=0.0153..0.0282 rows=30 loops=1)
+                    -> Covering index scan on s using idx_state_name  (cost=0.75 rows=5) (actual time=0.00933..0.0103 rows=5 loops=1)
+                    -> Index lookup on c using fk_cities_state (state_id = s.state_id)  (cost=0.87 rows=6) (actual time=0.00273..0.0033 rows=6 loops=5)
+                -> Covering index lookup on u using fk_users_city (city_id = c.city_id)  (cost=2.62 rows=664) (actual time=0.00331..0.0526 rows=667 loops=30)

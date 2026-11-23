@@ -1,0 +1,13 @@
+-- Query 9: Search available listings by partial model name.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Sort: pm.release_year DESC, p.final_price  (actual time=11.1..11.3 rows=4500 loops=1)
+    -> Stream results  (cost=4817 rows=6839) (actual time=0.0454..9.82 rows=4500 loops=1)
+        -> Nested loop inner join  (cost=4817 rows=6839) (actual time=0.0441..9.32 rows=4500 loops=1)
+            -> Nested loop inner join  (cost=2423 rows=6793) (actual time=0.0391..3.6 rows=4500 loops=1)
+                -> Nested loop inner join  (cost=45.4 rows=35.6) (actual time=0.0134..0.0915 rows=40 loops=1)
+                    -> Filter: (pm.model_name like '%iPhone%')  (cost=33 rows=35.6) (actual time=0.0117..0.0844 rows=40 loops=1)
+                        -> Table scan on pm  (cost=33 rows=320) (actual time=0.0109..0.0638 rows=320 loops=1)
+                    -> Single-row index lookup on b using PRIMARY (brand_id = pm.brand_id)  (cost=0.253 rows=1) (actual time=87.3e-6..108e-6 rows=1 loops=40)
+                -> Index lookup on pl using idx_listing_model_status (model_id = pm.model_id, status = 'available')  (cost=48.3 rows=191) (actual time=0.0108..0.0846 rows=112 loops=40)
+            -> Index lookup on p using idx_pricing_listing_current (listing_id = pl.listing_id, is_current = true)  (cost=0.252 rows=1.01) (actual time=0.00109..0.0012 rows=1 loops=4500)

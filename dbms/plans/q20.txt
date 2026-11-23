@@ -1,0 +1,11 @@
+-- Query 20: Include phone models that have no listings.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Sort: listing_count DESC  (actual time=30.9..30.9 rows=320 loops=1)
+    -> Table scan on <temporary>  (actual time=30.8..30.8 rows=320 loops=1)
+        -> Aggregate using temporary table  (actual time=30.8..30.8 rows=320 loops=1)
+            -> Nested loop left join  (cost=6371 rows=62339) (actual time=0.0202..7.68 rows=60000 loops=1)
+                -> Nested loop inner join  (cost=40.6 rows=320) (actual time=0.0154..0.0766 rows=320 loops=1)
+                    -> Covering index scan on b using brand_name  (cost=1.05 rows=8) (actual time=0.01..0.0118 rows=8 loops=1)
+                    -> Covering index lookup on pm using uk_brand_model (brand_id = b.brand_id)  (cost=1.45 rows=40) (actual time=0.00146..0.00679 rows=40 loops=8)
+                -> Covering index lookup on pl using idx_listing_model_status (model_id = pm.model_id)  (cost=0.364 rows=195) (actual time=0.00178..0.0182 rows=188 loops=320)

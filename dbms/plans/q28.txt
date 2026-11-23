@@ -1,0 +1,11 @@
+-- Query 28: Find sold listings with no reviews.
+-- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
+
+-> Nested loop antijoin  (cost=17406 rows=44854) (actual time=7.74..25.4 rows=10000 loops=1)
+    -> Nested loop inner join  (cost=9913 rows=12000) (actual time=7.73..19.1 rows=12000 loops=1)
+        -> Nested loop inner join  (cost=5713 rows=12000) (actual time=7.73..14.9 rows=12000 loops=1)
+            -> Sort: pl.listing_date DESC  (cost=1513 rows=12000) (actual time=7.72..7.98 rows=12000 loops=1)
+                -> Index lookup on pl using idx_status (status = 'sold')  (cost=1513 rows=12000) (actual time=0.269..6.49 rows=12000 loops=1)
+            -> Single-row index lookup on pm using PRIMARY (model_id = pl.model_id)  (cost=0.25 rows=1) (actual time=489e-6..505e-6 rows=1 loops=12000)
+        -> Single-row index lookup on b using PRIMARY (brand_id = pm.brand_id)  (cost=0.25 rows=1) (actual time=260e-6..276e-6 rows=1 loops=12000)
+    -> Covering index lookup on r using idx_listing_reviews (listing_id = pl.listing_id)  (cost=0.937 rows=3.74) (actual time=463e-6..463e-6 rows=0.167 loops=12000)
