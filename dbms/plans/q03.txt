@@ -1,8 +1,0 @@
--- Query 3: List phone models with brand information.
--- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
-
--> Sort: pm.release_year DESC, b.brand_name, pm.model_name  (actual time=0.874..0.889 rows=320 loops=1)
-    -> Stream results  (cost=57 rows=320) (actual time=0.0163..0.247 rows=320 loops=1)
-        -> Nested loop inner join  (cost=57 rows=320) (actual time=0.015..0.193 rows=320 loops=1)
-            -> Covering index scan on b using brand_name  (cost=1.05 rows=8) (actual time=0.00579..0.00675 rows=8 loops=1)
-            -> Index lookup on pm using uk_brand_model (brand_id = b.brand_id)  (cost=3.5 rows=40) (actual time=0.00376..0.0221 rows=40 loops=8)

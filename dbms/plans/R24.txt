@@ -1,0 +1,180 @@
+-- READ R24: Find available phones priced above the current-price average.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R24 run 1 ===
+Sort  (cost=3829.28..3844.28 rows=6000 width=61) (actual time=12.042..12.190 rows=8921 loops=1)
+  Sort Key: p.final_price DESC
+  Sort Method: quicksort  Memory: 942kB
+  Buffers: shared hit=1445
+  InitPlan 1
+    ->  Aggregate  (cost=771.01..771.02 rows=1 width=32) (actual time=1.968..1.968 rows=1 loops=1)
+          Buffers: shared hit=336
+          ->  Seq Scan on pricing  (cost=0.00..696.00 rows=30001 width=6) (actual time=0.002..1.201 rows=30000 loops=1)
+                Filter: is_current
+                Rows Removed by Filter: 6000
+                Buffers: shared hit=336
+  InitPlan 2
+    ->  Aggregate  (cost=771.01..771.02 rows=1 width=32) (actual time=2.528..2.529 rows=1 loops=1)
+          Buffers: shared hit=336
+          ->  Seq Scan on pricing pricing_1  (cost=0.00..696.00 rows=30001 width=6) (actual time=0.002..1.654 rows=30000 loops=1)
+                Filter: is_current
+                Rows Removed by Filter: 6000
+                Buffers: shared hit=336
+  ->  Hash Join  (cost=860.17..1910.73 rows=6000 width=61) (actual time=6.531..10.775 rows=8921 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=1442
+        ->  Hash Join  (cost=858.99..1885.45 rows=6000 width=27) (actual time=4.554..8.266 rows=8921 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=1105
+              ->  Hash Join  (cost=847.79..1858.29 rows=6000 width=14) (actual time=4.518..7.667 rows=8921 loops=1)
+                    Hash Cond: (pl.listing_id = p.listing_id)
+                    Buffers: shared hit=1101
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.002..2.100 rows=18000 loops=1)
+                          Filter: ((status)::text = 'available'::text)
+                          Rows Removed by Filter: 12000
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=722.79..722.79 rows=10000 width=10) (actual time=4.399..4.399 rows=14760 loops=1)
+                          Buckets: 16384  Batches: 1  Memory Usage: 763kB
+                          Buffers: shared hit=593
+                          ->  Bitmap Heap Scan on pricing p  (cost=236.79..722.79 rows=10000 width=10) (actual time=2.930..3.756 rows=14760 loops=1)
+                                Recheck Cond: (final_price > (InitPlan 2).col1)
+                                Filter: is_current
+                                Rows Removed by Filter: 3180
+                                Heap Blocks: exact=201
+                                Buffers: shared hit=593
+                                ->  Bitmap Index Scan on idx_final_price  (cost=0.00..234.29 rows=12000 width=0) (actual time=2.918..2.918 rows=17940 loops=1)
+                                      Index Cond: (final_price > (InitPlan 2).col1)
+                                      Buffers: shared hit=392
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.033..0.033 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.002..0.017 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.006..0.006 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.003 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=520
+Planning Time: 1.044 ms
+Execution Time: 12.375 ms
+
+=== R24 run 2 ===
+Sort  (cost=3829.28..3844.28 rows=6000 width=61) (actual time=11.961..12.117 rows=8921 loops=1)
+  Sort Key: p.final_price DESC
+  Sort Method: quicksort  Memory: 942kB
+  Buffers: shared hit=1445
+  InitPlan 1
+    ->  Aggregate  (cost=771.01..771.02 rows=1 width=32) (actual time=2.092..2.092 rows=1 loops=1)
+          Buffers: shared hit=336
+          ->  Seq Scan on pricing  (cost=0.00..696.00 rows=30001 width=6) (actual time=0.002..1.256 rows=30000 loops=1)
+                Filter: is_current
+                Rows Removed by Filter: 6000
+                Buffers: shared hit=336
+  InitPlan 2
+    ->  Aggregate  (cost=771.01..771.02 rows=1 width=32) (actual time=2.414..2.415 rows=1 loops=1)
+          Buffers: shared hit=336
+          ->  Seq Scan on pricing pricing_1  (cost=0.00..696.00 rows=30001 width=6) (actual time=0.002..1.584 rows=30000 loops=1)
+                Filter: is_current
+                Rows Removed by Filter: 6000
+                Buffers: shared hit=336
+  ->  Hash Join  (cost=860.17..1910.73 rows=6000 width=61) (actual time=6.658..10.703 rows=8921 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=1442
+        ->  Hash Join  (cost=858.99..1885.45 rows=6000 width=27) (actual time=4.557..8.097 rows=8921 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=1105
+              ->  Hash Join  (cost=847.79..1858.29 rows=6000 width=14) (actual time=4.522..7.516 rows=8921 loops=1)
+                    Hash Cond: (pl.listing_id = p.listing_id)
+                    Buffers: shared hit=1101
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.002..2.014 rows=18000 loops=1)
+                          Filter: ((status)::text = 'available'::text)
+                          Rows Removed by Filter: 12000
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=722.79..722.79 rows=10000 width=10) (actual time=4.393..4.393 rows=14760 loops=1)
+                          Buckets: 16384  Batches: 1  Memory Usage: 763kB
+                          Buffers: shared hit=593
+                          ->  Bitmap Heap Scan on pricing p  (cost=236.79..722.79 rows=10000 width=10) (actual time=2.811..3.696 rows=14760 loops=1)
+                                Recheck Cond: (final_price > (InitPlan 2).col1)
+                                Filter: is_current
+                                Rows Removed by Filter: 3180
+                                Heap Blocks: exact=201
+                                Buffers: shared hit=593
+                                ->  Bitmap Index Scan on idx_final_price  (cost=0.00..234.29 rows=12000 width=0) (actual time=2.800..2.800 rows=17940 loops=1)
+                                      Index Cond: (final_price > (InitPlan 2).col1)
+                                      Buffers: shared hit=392
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.032..0.032 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.002..0.017 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.005..0.005 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.003 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=520
+Planning Time: 0.869 ms
+Execution Time: 12.305 ms
+
+=== R24 run 3 ===
+Sort  (cost=3829.28..3844.28 rows=6000 width=61) (actual time=12.207..12.357 rows=8921 loops=1)
+  Sort Key: p.final_price DESC
+  Sort Method: quicksort  Memory: 942kB
+  Buffers: shared hit=1445
+  InitPlan 1
+    ->  Aggregate  (cost=771.01..771.02 rows=1 width=32) (actual time=2.032..2.032 rows=1 loops=1)
+          Buffers: shared hit=336
+          ->  Seq Scan on pricing  (cost=0.00..696.00 rows=30001 width=6) (actual time=0.001..1.233 rows=30000 loops=1)
+                Filter: is_current
+                Rows Removed by Filter: 6000
+                Buffers: shared hit=336
+  InitPlan 2
+    ->  Aggregate  (cost=771.01..771.02 rows=1 width=32) (actual time=2.531..2.531 rows=1 loops=1)
+          Buffers: shared hit=336
+          ->  Seq Scan on pricing pricing_1  (cost=0.00..696.00 rows=30001 width=6) (actual time=0.002..1.659 rows=30000 loops=1)
+                Filter: is_current
+                Rows Removed by Filter: 6000
+                Buffers: shared hit=336
+  ->  Hash Join  (cost=860.17..1910.73 rows=6000 width=61) (actual time=6.628..10.997 rows=8921 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=1442
+        ->  Hash Join  (cost=858.99..1885.45 rows=6000 width=27) (actual time=4.588..8.439 rows=8921 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=1105
+              ->  Hash Join  (cost=847.79..1858.29 rows=6000 width=14) (actual time=4.552..7.850 rows=8921 loops=1)
+                    Hash Cond: (pl.listing_id = p.listing_id)
+                    Buffers: shared hit=1101
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.003..2.186 rows=18000 loops=1)
+                          Filter: ((status)::text = 'available'::text)
+                          Rows Removed by Filter: 12000
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=722.79..722.79 rows=10000 width=10) (actual time=4.434..4.434 rows=14760 loops=1)
+                          Buckets: 16384  Batches: 1  Memory Usage: 763kB
+                          Buffers: shared hit=593
+                          ->  Bitmap Heap Scan on pricing p  (cost=236.79..722.79 rows=10000 width=10) (actual time=2.920..3.746 rows=14760 loops=1)
+                                Recheck Cond: (final_price > (InitPlan 2).col1)
+                                Filter: is_current
+                                Rows Removed by Filter: 3180
+                                Heap Blocks: exact=201
+                                Buffers: shared hit=593
+                                ->  Bitmap Index Scan on idx_final_price  (cost=0.00..234.29 rows=12000 width=0) (actual time=2.909..2.909 rows=17940 loops=1)
+                                      Index Cond: (final_price > (InitPlan 2).col1)
+                                      Buffers: shared hit=392
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.032..0.032 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.002..0.017 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.005..0.005 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.002..0.003 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=520
+Planning Time: 0.850 ms
+Execution Time: 12.544 ms
+

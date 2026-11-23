@@ -1,0 +1,105 @@
+-- READ R15: Total completed sales and revenue per seller.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R15 run 1 ===
+Sort  (cost=2240.28..2255.28 rows=6000 width=84) (actual time=6.604..6.636 rows=2000 loops=1)
+  Sort Key: (COALESCE(sum(t.amount), '0'::numeric)) DESC
+  Sort Method: quicksort  Memory: 162kB
+  Buffers: shared hit=831
+  ->  HashAggregate  (cost=1773.76..1863.76 rows=6000 width=84) (actual time=6.072..6.363 rows=2000 loops=1)
+        Group Key: u.user_id
+        Batches: 1  Memory Usage: 1233kB
+        Buffers: shared hit=828
+        ->  Hash Join  (cost=732.50..1728.76 rows=6000 width=22) (actual time=1.841..5.446 rows=6000 loops=1)
+              Hash Cond: (pl.seller_id = u.user_id)
+              Buffers: shared hit=828
+              ->  Hash Join  (cost=304.50..1285.00 rows=6000 width=14) (actual time=0.881..3.911 rows=6000 loops=1)
+                    Hash Cond: (pl.listing_id = t.listing_id)
+                    Buffers: shared hit=625
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=8) (actual time=0.001..1.184 rows=30000 loops=1)
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=229.50..229.50 rows=6000 width=14) (actual time=0.873..0.873 rows=6000 loops=1)
+                          Buckets: 8192  Batches: 1  Memory Usage: 346kB
+                          Buffers: shared hit=117
+                          ->  Seq Scan on transactions t  (cost=0.00..229.50 rows=6000 width=14) (actual time=0.003..0.591 rows=6000 loops=1)
+                                Filter: ((payment_status)::text = 'completed'::text)
+                                Rows Removed by Filter: 3000
+                                Buffers: shared hit=117
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=12) (actual time=0.951..0.951 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 567kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=12) (actual time=0.003..0.558 rows=10000 loops=1)
+                          Buffers: shared hit=203
+Planning:
+  Buffers: shared hit=440
+Planning Time: 0.860 ms
+Execution Time: 6.717 ms
+
+=== R15 run 2 ===
+Sort  (cost=2240.28..2255.28 rows=6000 width=84) (actual time=6.331..6.368 rows=2000 loops=1)
+  Sort Key: (COALESCE(sum(t.amount), '0'::numeric)) DESC
+  Sort Method: quicksort  Memory: 162kB
+  Buffers: shared hit=831
+  ->  HashAggregate  (cost=1773.76..1863.76 rows=6000 width=84) (actual time=5.747..6.070 rows=2000 loops=1)
+        Group Key: u.user_id
+        Batches: 1  Memory Usage: 1233kB
+        Buffers: shared hit=828
+        ->  Hash Join  (cost=732.50..1728.76 rows=6000 width=22) (actual time=2.043..5.186 rows=6000 loops=1)
+              Hash Cond: (pl.seller_id = u.user_id)
+              Buffers: shared hit=828
+              ->  Hash Join  (cost=304.50..1285.00 rows=6000 width=14) (actual time=0.953..3.616 rows=6000 loops=1)
+                    Hash Cond: (pl.listing_id = t.listing_id)
+                    Buffers: shared hit=625
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=8) (actual time=0.002..1.083 rows=30000 loops=1)
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=229.50..229.50 rows=6000 width=14) (actual time=0.943..0.944 rows=6000 loops=1)
+                          Buckets: 8192  Batches: 1  Memory Usage: 346kB
+                          Buffers: shared hit=117
+                          ->  Seq Scan on transactions t  (cost=0.00..229.50 rows=6000 width=14) (actual time=0.003..0.629 rows=6000 loops=1)
+                                Filter: ((payment_status)::text = 'completed'::text)
+                                Rows Removed by Filter: 3000
+                                Buffers: shared hit=117
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=12) (actual time=1.081..1.081 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 567kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=12) (actual time=0.004..0.610 rows=10000 loops=1)
+                          Buffers: shared hit=203
+Planning:
+  Buffers: shared hit=440
+Planning Time: 0.826 ms
+Execution Time: 6.452 ms
+
+=== R15 run 3 ===
+Sort  (cost=2240.28..2255.28 rows=6000 width=84) (actual time=6.075..6.118 rows=2000 loops=1)
+  Sort Key: (COALESCE(sum(t.amount), '0'::numeric)) DESC
+  Sort Method: quicksort  Memory: 162kB
+  Buffers: shared hit=831
+  ->  HashAggregate  (cost=1773.76..1863.76 rows=6000 width=84) (actual time=5.432..5.772 rows=2000 loops=1)
+        Group Key: u.user_id
+        Batches: 1  Memory Usage: 1233kB
+        Buffers: shared hit=828
+        ->  Hash Join  (cost=732.50..1728.76 rows=6000 width=22) (actual time=1.843..4.926 rows=6000 loops=1)
+              Hash Cond: (pl.seller_id = u.user_id)
+              Buffers: shared hit=828
+              ->  Hash Join  (cost=304.50..1285.00 rows=6000 width=14) (actual time=0.869..3.484 rows=6000 loops=1)
+                    Hash Cond: (pl.listing_id = t.listing_id)
+                    Buffers: shared hit=625
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=8) (actual time=0.001..1.059 rows=30000 loops=1)
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=229.50..229.50 rows=6000 width=14) (actual time=0.845..0.845 rows=6000 loops=1)
+                          Buckets: 8192  Batches: 1  Memory Usage: 346kB
+                          Buffers: shared hit=117
+                          ->  Seq Scan on transactions t  (cost=0.00..229.50 rows=6000 width=14) (actual time=0.003..0.571 rows=6000 loops=1)
+                                Filter: ((payment_status)::text = 'completed'::text)
+                                Rows Removed by Filter: 3000
+                                Buffers: shared hit=117
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=12) (actual time=0.965..0.965 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 567kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=12) (actual time=0.003..0.553 rows=10000 loops=1)
+                          Buffers: shared hit=203
+Planning:
+  Buffers: shared hit=440
+Planning Time: 0.765 ms
+Execution Time: 6.199 ms
+

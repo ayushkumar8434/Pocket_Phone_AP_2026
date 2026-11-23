@@ -1,0 +1,87 @@
+-- READ R32: Price distribution by storage capacity.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R32 run 1 ===
+Sort  (cost=2152.91..2152.92 rows=5 width=140) (actual time=8.139..8.140 rows=5 loops=1)
+  Sort Key: pl.storage_capacity
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=847
+  ->  HashAggregate  (cost=2152.78..2152.85 rows=5 width=140) (actual time=8.131..8.133 rows=5 loops=1)
+        Group Key: pl.storage_capacity
+        Batches: 1  Memory Usage: 24kB
+        Buffers: shared hit=844
+        ->  Hash Join  (cost=1108.00..1882.76 rows=18001 width=10) (actual time=2.742..6.092 rows=18000 loops=1)
+              Hash Cond: (p.listing_id = pl.listing_id)
+              Buffers: shared hit=844
+              ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.004..1.576 rows=30000 loops=1)
+                    Filter: is_current
+                    Rows Removed by Filter: 6000
+                    Buffers: shared hit=336
+              ->  Hash  (cost=883.00..883.00 rows=18000 width=8) (actual time=2.723..2.723 rows=18000 loops=1)
+                    Buckets: 32768  Batches: 1  Memory Usage: 960kB
+                    Buffers: shared hit=508
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.002..2.093 rows=18000 loops=1)
+                          Filter: ((status)::text = 'available'::text)
+                          Rows Removed by Filter: 12000
+                          Buffers: shared hit=508
+Planning:
+  Buffers: shared hit=331
+Planning Time: 0.481 ms
+Execution Time: 8.178 ms
+
+=== R32 run 2 ===
+Sort  (cost=2152.91..2152.92 rows=5 width=140) (actual time=8.260..8.261 rows=5 loops=1)
+  Sort Key: pl.storage_capacity
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=847
+  ->  HashAggregate  (cost=2152.78..2152.85 rows=5 width=140) (actual time=8.252..8.254 rows=5 loops=1)
+        Group Key: pl.storage_capacity
+        Batches: 1  Memory Usage: 24kB
+        Buffers: shared hit=844
+        ->  Hash Join  (cost=1108.00..1882.76 rows=18001 width=10) (actual time=2.962..6.149 rows=18000 loops=1)
+              Hash Cond: (p.listing_id = pl.listing_id)
+              Buffers: shared hit=844
+              ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.004..1.501 rows=30000 loops=1)
+                    Filter: is_current
+                    Rows Removed by Filter: 6000
+                    Buffers: shared hit=336
+              ->  Hash  (cost=883.00..883.00 rows=18000 width=8) (actual time=2.923..2.923 rows=18000 loops=1)
+                    Buckets: 32768  Batches: 1  Memory Usage: 960kB
+                    Buffers: shared hit=508
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.003..2.217 rows=18000 loops=1)
+                          Filter: ((status)::text = 'available'::text)
+                          Rows Removed by Filter: 12000
+                          Buffers: shared hit=508
+Planning:
+  Buffers: shared hit=331
+Planning Time: 0.477 ms
+Execution Time: 8.300 ms
+
+=== R32 run 3 ===
+Sort  (cost=2152.91..2152.92 rows=5 width=140) (actual time=8.462..8.463 rows=5 loops=1)
+  Sort Key: pl.storage_capacity
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=847
+  ->  HashAggregate  (cost=2152.78..2152.85 rows=5 width=140) (actual time=8.454..8.457 rows=5 loops=1)
+        Group Key: pl.storage_capacity
+        Batches: 1  Memory Usage: 24kB
+        Buffers: shared hit=844
+        ->  Hash Join  (cost=1108.00..1882.76 rows=18001 width=10) (actual time=2.840..6.310 rows=18000 loops=1)
+              Hash Cond: (p.listing_id = pl.listing_id)
+              Buffers: shared hit=844
+              ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.004..1.593 rows=30000 loops=1)
+                    Filter: is_current
+                    Rows Removed by Filter: 6000
+                    Buffers: shared hit=336
+              ->  Hash  (cost=883.00..883.00 rows=18000 width=8) (actual time=2.821..2.821 rows=18000 loops=1)
+                    Buckets: 32768  Batches: 1  Memory Usage: 960kB
+                    Buffers: shared hit=508
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.003..2.150 rows=18000 loops=1)
+                          Filter: ((status)::text = 'available'::text)
+                          Rows Removed by Filter: 12000
+                          Buffers: shared hit=508
+Planning:
+  Buffers: shared hit=331
+Planning Time: 0.468 ms
+Execution Time: 8.501 ms
+

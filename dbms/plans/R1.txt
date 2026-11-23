@@ -1,0 +1,87 @@
+-- READ R1: List users with their city, state, and country.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R1 run 1 ===
+Sort  (cost=1048.63..1073.63 rows=10000 width=74) (actual time=9.928..10.355 rows=10000 loops=1)
+  Sort Key: u.registration_date DESC
+  Sort Method: quicksort  Memory: 1316kB
+  Buffers: shared hit=208
+  ->  Hash Join  (cost=2.79..384.24 rows=10000 width=74) (actual time=0.111..6.685 rows=10000 loops=1)
+        Hash Cond: (c.state_id = s.state_id)
+        Buffers: shared hit=205
+        ->  Hash Join  (cost=1.68..334.63 rows=10000 width=62) (actual time=0.059..4.521 rows=10000 loops=1)
+              Hash Cond: (u.city_id = c.city_id)
+              Buffers: shared hit=204
+              ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=55) (actual time=0.013..1.503 rows=10000 loops=1)
+                    Buffers: shared hit=203
+              ->  Hash  (cost=1.30..1.30 rows=30 width=15) (actual time=0.032..0.033 rows=30 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on cities c  (cost=0.00..1.30 rows=30 width=15) (actual time=0.012..0.019 rows=30 loops=1)
+                          Buffers: shared hit=1
+        ->  Hash  (cost=1.05..1.05 rows=5 width=20) (actual time=0.034..0.034 rows=5 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on states s  (cost=0.00..1.05 rows=5 width=20) (actual time=0.015..0.017 rows=5 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=370
+Planning Time: 3.443 ms
+Execution Time: 11.298 ms
+
+=== R1 run 2 ===
+Sort  (cost=1048.63..1073.63 rows=10000 width=74) (actual time=7.290..7.633 rows=10000 loops=1)
+  Sort Key: u.registration_date DESC
+  Sort Method: quicksort  Memory: 1316kB
+  Buffers: shared hit=208
+  ->  Hash Join  (cost=2.79..384.24 rows=10000 width=74) (actual time=0.047..4.981 rows=10000 loops=1)
+        Hash Cond: (c.state_id = s.state_id)
+        Buffers: shared hit=205
+        ->  Hash Join  (cost=1.68..334.63 rows=10000 width=62) (actual time=0.026..3.465 rows=10000 loops=1)
+              Hash Cond: (u.city_id = c.city_id)
+              Buffers: shared hit=204
+              ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=55) (actual time=0.005..1.281 rows=10000 loops=1)
+                    Buffers: shared hit=203
+              ->  Hash  (cost=1.30..1.30 rows=30 width=15) (actual time=0.014..0.015 rows=30 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on cities c  (cost=0.00..1.30 rows=30 width=15) (actual time=0.004..0.008 rows=30 loops=1)
+                          Buffers: shared hit=1
+        ->  Hash  (cost=1.05..1.05 rows=5 width=20) (actual time=0.012..0.013 rows=5 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on states s  (cost=0.00..1.05 rows=5 width=20) (actual time=0.004..0.005 rows=5 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=370
+Planning Time: 1.844 ms
+Execution Time: 8.357 ms
+
+=== R1 run 3 ===
+Sort  (cost=1048.63..1073.63 rows=10000 width=74) (actual time=3.866..4.040 rows=10000 loops=1)
+  Sort Key: u.registration_date DESC
+  Sort Method: quicksort  Memory: 1316kB
+  Buffers: shared hit=208
+  ->  Hash Join  (cost=2.79..384.24 rows=10000 width=74) (actual time=0.061..2.487 rows=10000 loops=1)
+        Hash Cond: (c.state_id = s.state_id)
+        Buffers: shared hit=205
+        ->  Hash Join  (cost=1.68..334.63 rows=10000 width=62) (actual time=0.031..1.649 rows=10000 loops=1)
+              Hash Cond: (u.city_id = c.city_id)
+              Buffers: shared hit=204
+              ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=55) (actual time=0.009..0.565 rows=10000 loops=1)
+                    Buffers: shared hit=203
+              ->  Hash  (cost=1.30..1.30 rows=30 width=15) (actual time=0.015..0.015 rows=30 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on cities c  (cost=0.00..1.30 rows=30 width=15) (actual time=0.007..0.010 rows=30 loops=1)
+                          Buffers: shared hit=1
+        ->  Hash  (cost=1.05..1.05 rows=5 width=20) (actual time=0.019..0.020 rows=5 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on states s  (cost=0.00..1.05 rows=5 width=20) (actual time=0.008..0.009 rows=5 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=370
+Planning Time: 1.640 ms
+Execution Time: 4.361 ms
+

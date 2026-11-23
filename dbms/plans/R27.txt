@@ -1,0 +1,156 @@
+-- READ R27: Find users who have both bought and sold phones.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R27 run 1 ===
+Sort  (cost=27918.46..27925.95 rows=2998 width=48) (actual time=10.345..10.394 rows=3000 loops=1)
+  Sort Key: ((SubPlan 1)) DESC
+  Sort Method: quicksort  Memory: 305kB
+  Buffers: shared hit=12388
+  ->  Hash Join  (cost=1474.41..27745.33 rows=2998 width=48) (actual time=4.611..10.142 rows=3000 loops=1)
+        Hash Cond: (pl.seller_id = u.user_id)
+        Buffers: shared hit=12385
+        ->  HashAggregate  (cost=777.29..867.34 rows=9005 width=4) (actual time=2.393..2.767 rows=9005 loops=1)
+              Group Key: pl.seller_id
+              Batches: 1  Memory Usage: 913kB
+              Buffers: shared hit=63
+              ->  Index Only Scan using idx_seller on phone_listings pl  (cost=0.29..702.29 rows=30000 width=4) (actual time=0.003..0.867 rows=30000 loops=1)
+                    Heap Fetches: 0
+                    Buffers: shared hit=63
+        ->  Hash  (cost=659.62..659.62 rows=3000 width=36) (actual time=2.196..2.197 rows=3000 loops=1)
+              Buckets: 4096  Batches: 1  Memory Usage: 242kB
+              Buffers: shared hit=320
+              ->  Hash Join  (cost=297.00..659.62 rows=3000 width=36) (actual time=1.081..2.024 rows=3000 loops=1)
+                    Hash Cond: (u.user_id = t.buyer_id)
+                    Buffers: shared hit=320
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.003..0.387 rows=10000 loops=1)
+                          Buffers: shared hit=203
+                    ->  Hash  (cost=259.50..259.50 rows=3000 width=4) (actual time=1.073..1.074 rows=3000 loops=1)
+                          Buckets: 4096  Batches: 1  Memory Usage: 138kB
+                          Buffers: shared hit=117
+                          ->  HashAggregate  (cost=229.50..259.50 rows=3000 width=4) (actual time=0.862..0.964 rows=3000 loops=1)
+                                Group Key: t.buyer_id
+                                Batches: 1  Memory Usage: 241kB
+                                Buffers: shared hit=117
+                                ->  Seq Scan on transactions t  (cost=0.00..207.00 rows=9000 width=4) (actual time=0.002..0.398 rows=9000 loops=1)
+                                      Buffers: shared hit=117
+        SubPlan 1
+          ->  Aggregate  (cost=4.35..4.36 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=3000)
+                Buffers: shared hit=6001
+                ->  Index Only Scan using idx_listing_seller_status on phone_listings pl_1  (cost=0.29..4.34 rows=3 width=0) (actual time=0.000..0.001 rows=3 loops=3000)
+                      Index Cond: (seller_id = u.user_id)
+                      Heap Fetches: 0
+                      Buffers: shared hit=6001
+        SubPlan 2
+          ->  Aggregate  (cost=4.35..4.36 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=3000)
+                Buffers: shared hit=6001
+                ->  Index Only Scan using idx_transaction_buyer_date on transactions t_1  (cost=0.29..4.34 rows=3 width=0) (actual time=0.000..0.000 rows=3 loops=3000)
+                      Index Cond: (buyer_id = u.user_id)
+                      Heap Fetches: 0
+                      Buffers: shared hit=6001
+Planning:
+  Buffers: shared hit=505
+Planning Time: 0.893 ms
+Execution Time: 10.518 ms
+
+=== R27 run 2 ===
+Sort  (cost=27918.46..27925.95 rows=2998 width=48) (actual time=10.259..10.308 rows=3000 loops=1)
+  Sort Key: ((SubPlan 1)) DESC
+  Sort Method: quicksort  Memory: 305kB
+  Buffers: shared hit=12388
+  ->  Hash Join  (cost=1474.41..27745.33 rows=2998 width=48) (actual time=4.569..10.065 rows=3000 loops=1)
+        Hash Cond: (pl.seller_id = u.user_id)
+        Buffers: shared hit=12385
+        ->  HashAggregate  (cost=777.29..867.34 rows=9005 width=4) (actual time=2.358..2.729 rows=9005 loops=1)
+              Group Key: pl.seller_id
+              Batches: 1  Memory Usage: 913kB
+              Buffers: shared hit=63
+              ->  Index Only Scan using idx_seller on phone_listings pl  (cost=0.29..702.29 rows=30000 width=4) (actual time=0.003..0.880 rows=30000 loops=1)
+                    Heap Fetches: 0
+                    Buffers: shared hit=63
+        ->  Hash  (cost=659.62..659.62 rows=3000 width=36) (actual time=2.190..2.191 rows=3000 loops=1)
+              Buckets: 4096  Batches: 1  Memory Usage: 242kB
+              Buffers: shared hit=320
+              ->  Hash Join  (cost=297.00..659.62 rows=3000 width=36) (actual time=1.081..2.021 rows=3000 loops=1)
+                    Hash Cond: (u.user_id = t.buyer_id)
+                    Buffers: shared hit=320
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.003..0.388 rows=10000 loops=1)
+                          Buffers: shared hit=203
+                    ->  Hash  (cost=259.50..259.50 rows=3000 width=4) (actual time=1.074..1.074 rows=3000 loops=1)
+                          Buckets: 4096  Batches: 1  Memory Usage: 138kB
+                          Buffers: shared hit=117
+                          ->  HashAggregate  (cost=229.50..259.50 rows=3000 width=4) (actual time=0.877..0.972 rows=3000 loops=1)
+                                Group Key: t.buyer_id
+                                Batches: 1  Memory Usage: 241kB
+                                Buffers: shared hit=117
+                                ->  Seq Scan on transactions t  (cost=0.00..207.00 rows=9000 width=4) (actual time=0.003..0.403 rows=9000 loops=1)
+                                      Buffers: shared hit=117
+        SubPlan 1
+          ->  Aggregate  (cost=4.35..4.36 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=3000)
+                Buffers: shared hit=6001
+                ->  Index Only Scan using idx_listing_seller_status on phone_listings pl_1  (cost=0.29..4.34 rows=3 width=0) (actual time=0.000..0.001 rows=3 loops=3000)
+                      Index Cond: (seller_id = u.user_id)
+                      Heap Fetches: 0
+                      Buffers: shared hit=6001
+        SubPlan 2
+          ->  Aggregate  (cost=4.35..4.36 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=3000)
+                Buffers: shared hit=6001
+                ->  Index Only Scan using idx_transaction_buyer_date on transactions t_1  (cost=0.29..4.34 rows=3 width=0) (actual time=0.000..0.000 rows=3 loops=3000)
+                      Index Cond: (buyer_id = u.user_id)
+                      Heap Fetches: 0
+                      Buffers: shared hit=6001
+Planning:
+  Buffers: shared hit=505
+Planning Time: 0.857 ms
+Execution Time: 10.429 ms
+
+=== R27 run 3 ===
+Sort  (cost=27918.46..27925.95 rows=2998 width=48) (actual time=10.559..10.608 rows=3000 loops=1)
+  Sort Key: ((SubPlan 1)) DESC
+  Sort Method: quicksort  Memory: 305kB
+  Buffers: shared hit=12388
+  ->  Hash Join  (cost=1474.41..27745.33 rows=2998 width=48) (actual time=4.795..10.345 rows=3000 loops=1)
+        Hash Cond: (pl.seller_id = u.user_id)
+        Buffers: shared hit=12385
+        ->  HashAggregate  (cost=777.29..867.34 rows=9005 width=4) (actual time=2.474..2.850 rows=9005 loops=1)
+              Group Key: pl.seller_id
+              Batches: 1  Memory Usage: 913kB
+              Buffers: shared hit=63
+              ->  Index Only Scan using idx_seller on phone_listings pl  (cost=0.29..702.29 rows=30000 width=4) (actual time=0.004..0.896 rows=30000 loops=1)
+                    Heap Fetches: 0
+                    Buffers: shared hit=63
+        ->  Hash  (cost=659.62..659.62 rows=3000 width=36) (actual time=2.301..2.301 rows=3000 loops=1)
+              Buckets: 4096  Batches: 1  Memory Usage: 242kB
+              Buffers: shared hit=320
+              ->  Hash Join  (cost=297.00..659.62 rows=3000 width=36) (actual time=1.129..2.121 rows=3000 loops=1)
+                    Hash Cond: (u.user_id = t.buyer_id)
+                    Buffers: shared hit=320
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.002..0.405 rows=10000 loops=1)
+                          Buffers: shared hit=203
+                    ->  Hash  (cost=259.50..259.50 rows=3000 width=4) (actual time=1.122..1.122 rows=3000 loops=1)
+                          Buckets: 4096  Batches: 1  Memory Usage: 138kB
+                          Buffers: shared hit=117
+                          ->  HashAggregate  (cost=229.50..259.50 rows=3000 width=4) (actual time=0.912..1.006 rows=3000 loops=1)
+                                Group Key: t.buyer_id
+                                Batches: 1  Memory Usage: 241kB
+                                Buffers: shared hit=117
+                                ->  Seq Scan on transactions t  (cost=0.00..207.00 rows=9000 width=4) (actual time=0.002..0.398 rows=9000 loops=1)
+                                      Buffers: shared hit=117
+        SubPlan 1
+          ->  Aggregate  (cost=4.35..4.36 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=3000)
+                Buffers: shared hit=6001
+                ->  Index Only Scan using idx_listing_seller_status on phone_listings pl_1  (cost=0.29..4.34 rows=3 width=0) (actual time=0.000..0.001 rows=3 loops=3000)
+                      Index Cond: (seller_id = u.user_id)
+                      Heap Fetches: 0
+                      Buffers: shared hit=6001
+        SubPlan 2
+          ->  Aggregate  (cost=4.35..4.36 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=3000)
+                Buffers: shared hit=6001
+                ->  Index Only Scan using idx_transaction_buyer_date on transactions t_1  (cost=0.29..4.34 rows=3 width=0) (actual time=0.000..0.000 rows=3 loops=3000)
+                      Index Cond: (buyer_id = u.user_id)
+                      Heap Fetches: 0
+                      Buffers: shared hit=6001
+Planning:
+  Buffers: shared hit=505
+Planning Time: 0.836 ms
+Execution Time: 10.735 ms
+

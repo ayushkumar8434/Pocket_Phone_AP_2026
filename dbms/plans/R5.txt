@@ -1,0 +1,54 @@
+-- READ R5: Get camera specifications for one model.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R5 run 1 ===
+Sort  (cost=10.88..10.89 rows=3 width=28) (actual time=0.018..0.018 rows=3 loops=1)
+  Sort Key: (CASE camera_type WHEN 'rear_primary'::text THEN 1 WHEN 'rear_secondary'::text THEN 2 WHEN 'rear_tertiary'::text THEN 3 WHEN 'rear_quaternary'::text THEN 4 ELSE 5 END)
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6
+  ->  Bitmap Heap Scan on camera_specs  (cost=4.30..10.85 rows=3 width=28) (actual time=0.009..0.010 rows=3 loops=1)
+        Recheck Cond: (model_id = 10)
+        Heap Blocks: exact=1
+        Buffers: shared hit=3
+        ->  Bitmap Index Scan on idx_model_camera  (cost=0.00..4.30 rows=3 width=0) (actual time=0.003..0.003 rows=3 loops=1)
+              Index Cond: (model_id = 10)
+              Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=105
+Planning Time: 0.218 ms
+Execution Time: 0.036 ms
+
+=== R5 run 2 ===
+Sort  (cost=10.88..10.89 rows=3 width=28) (actual time=0.018..0.019 rows=3 loops=1)
+  Sort Key: (CASE camera_type WHEN 'rear_primary'::text THEN 1 WHEN 'rear_secondary'::text THEN 2 WHEN 'rear_tertiary'::text THEN 3 WHEN 'rear_quaternary'::text THEN 4 ELSE 5 END)
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6
+  ->  Bitmap Heap Scan on camera_specs  (cost=4.30..10.85 rows=3 width=28) (actual time=0.009..0.009 rows=3 loops=1)
+        Recheck Cond: (model_id = 10)
+        Heap Blocks: exact=1
+        Buffers: shared hit=3
+        ->  Bitmap Index Scan on idx_model_camera  (cost=0.00..4.30 rows=3 width=0) (actual time=0.004..0.004 rows=3 loops=1)
+              Index Cond: (model_id = 10)
+              Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=105
+Planning Time: 0.199 ms
+Execution Time: 0.037 ms
+
+=== R5 run 3 ===
+Sort  (cost=10.88..10.89 rows=3 width=28) (actual time=0.017..0.017 rows=3 loops=1)
+  Sort Key: (CASE camera_type WHEN 'rear_primary'::text THEN 1 WHEN 'rear_secondary'::text THEN 2 WHEN 'rear_tertiary'::text THEN 3 WHEN 'rear_quaternary'::text THEN 4 ELSE 5 END)
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6
+  ->  Bitmap Heap Scan on camera_specs  (cost=4.30..10.85 rows=3 width=28) (actual time=0.008..0.009 rows=3 loops=1)
+        Recheck Cond: (model_id = 10)
+        Heap Blocks: exact=1
+        Buffers: shared hit=3
+        ->  Bitmap Index Scan on idx_model_camera  (cost=0.00..4.30 rows=3 width=0) (actual time=0.003..0.004 rows=3 loops=1)
+              Index Cond: (model_id = 10)
+              Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=105
+Planning Time: 0.176 ms
+Execution Time: 0.034 ms
+

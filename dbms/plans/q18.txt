@@ -1,7 +1,0 @@
--- Query 18: Monthly transaction volume and payment outcomes.
--- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
-
--> Sort: transaction_year DESC, transaction_month DESC  (actual time=10..10 rows=14 loops=1)
-    -> Table scan on <temporary>  (actual time=10..10 rows=14 loops=1)
-        -> Aggregate using temporary table  (actual time=10..10 rows=14 loops=1)
-            -> Table scan on Transactions  (cost=1843 rows=18191) (actual time=0.122..1.92 rows=18000 loops=1)

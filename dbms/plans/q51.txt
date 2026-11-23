@@ -1,9 +1,0 @@
--- Query 51: Estimate value from recent similar model listings.
--- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
-
--> Table scan on <temporary>  (actual time=0.371..0.371 rows=1 loops=1)
-    -> Aggregate using temporary table  (actual time=0.371..0.371 rows=1 loops=1)
-        -> Nested loop inner join  (cost=86.4 rows=2.29) (actual time=0.0376..0.353 rows=34 loops=1)
-            -> Filter: ((pl.storage_capacity = 64) and (pl.`condition` in ('new','like_new','good')) and (pl.listing_date >= <cache>((curdate() - interval 3 month))))  (cost=85.6 rows=2.28) (actual time=0.0315..0.264 rows=34 loops=1)
-                -> Index range scan on pl using idx_listing_model_status over (model_id = 241 AND status = 'available') OR (model_id = 241 AND status = 'sold'), with index condition: ((pl.model_id = 241) and (pl.`status` in ('available','sold')))  (cost=85.6 rows=189) (actual time=0.0302..0.247 rows=188 loops=1)
-            -> Index lookup on p using idx_pricing_listing_current (listing_id = pl.listing_id, is_current = true)  (cost=0.296 rows=1.01) (actual time=0.0024..0.00253 rows=1 loops=34)

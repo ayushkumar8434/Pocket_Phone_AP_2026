@@ -1,0 +1,37 @@
+-- WRITE W3: Insert pricing for the listing just created in the session.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+-- Run inside BEGIN ... ROLLBACK, so the data does not change.
+
+=== W3 run 1 ===
+Insert on pricing  (cost=0.00..0.03 rows=0 width=0) (actual time=0.881..0.882 rows=0 loops=1)
+  Buffers: shared hit=341
+  ->  Result  (cost=0.00..0.03 rows=1 width=65) (actual time=0.015..0.015 rows=1 loops=1)
+        Buffers: shared hit=20
+Planning Time: 0.005 ms
+Trigger for constraint fk_pricing_listing: time=0.127 calls=1
+Trigger trg_calculate_final_price: time=0.128 calls=1
+Trigger trg_set_old_prices_non_current: time=0.139 calls=1
+Execution Time: 1.011 ms
+
+=== W3 run 2 ===
+Insert on pricing  (cost=0.00..0.03 rows=0 width=0) (actual time=0.862..0.863 rows=0 loops=1)
+  Buffers: shared hit=340
+  ->  Result  (cost=0.00..0.03 rows=1 width=65) (actual time=0.017..0.017 rows=1 loops=1)
+        Buffers: shared hit=20
+Planning Time: 0.004 ms
+Trigger for constraint fk_pricing_listing: time=0.124 calls=1
+Trigger trg_calculate_final_price: time=0.133 calls=1
+Trigger trg_set_old_prices_non_current: time=0.134 calls=1
+Execution Time: 0.991 ms
+
+=== W3 run 3 ===
+Insert on pricing  (cost=0.00..0.03 rows=0 width=0) (actual time=1.159..1.159 rows=0 loops=1)
+  Buffers: shared hit=340
+  ->  Result  (cost=0.00..0.03 rows=1 width=65) (actual time=0.015..0.016 rows=1 loops=1)
+        Buffers: shared hit=20
+Planning Time: 0.005 ms
+Trigger for constraint fk_pricing_listing: time=0.215 calls=1
+Trigger trg_calculate_final_price: time=0.205 calls=1
+Trigger trg_set_old_prices_non_current: time=0.220 calls=1
+Execution Time: 1.378 ms
+

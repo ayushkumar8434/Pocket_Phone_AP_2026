@@ -1,0 +1,159 @@
+-- READ R19: Show transactions with complete buyer, seller, and phone details.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R19 run 1 ===
+Sort  (cost=2896.84..2919.34 rows=9000 width=112) (actual time=11.075..11.272 rows=9000 loops=1)
+  Sort Key: t.transaction_date DESC
+  Sort Method: quicksort  Memory: 1636kB
+  Buffers: shared hit=1039
+  ->  Hash Join  (cost=1187.88..2305.73 rows=9000 width=112) (actual time=3.583..9.767 rows=9000 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=1036
+        ->  Hash Join  (cost=1186.70..2268.41 rows=9000 width=110) (actual time=3.573..9.183 rows=9000 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=1035
+              ->  Hash Join  (cost=1175.50..2233.27 rows=9000 width=97) (actual time=3.537..8.510 rows=9000 loops=1)
+                    Hash Cond: (pl.seller_id = seller.user_id)
+                    Buffers: shared hit=1031
+                    ->  Hash Join  (cost=747.50..1781.64 rows=9000 width=73) (actual time=2.340..6.452 rows=9000 loops=1)
+                          Hash Cond: (t.buyer_id = buyer.user_id)
+                          Buffers: shared hit=828
+                          ->  Hash Join  (cost=319.50..1330.00 rows=9000 width=49) (actual time=1.334..4.623 rows=9000 loops=1)
+                                Hash Cond: (pl.listing_id = t.listing_id)
+                                Buffers: shared hit=625
+                                ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=12) (actual time=0.001..1.167 rows=30000 loops=1)
+                                      Buffers: shared hit=508
+                                ->  Hash  (cost=207.00..207.00 rows=9000 width=45) (actual time=1.322..1.322 rows=9000 loops=1)
+                                      Buckets: 16384  Batches: 1  Memory Usage: 861kB
+                                      Buffers: shared hit=117
+                                      ->  Seq Scan on transactions t  (cost=0.00..207.00 rows=9000 width=45) (actual time=0.003..0.612 rows=9000 loops=1)
+                                            Buffers: shared hit=117
+                          ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=0.996..0.996 rows=10000 loops=1)
+                                Buckets: 16384  Batches: 1  Memory Usage: 789kB
+                                Buffers: shared hit=203
+                                ->  Seq Scan on users buyer  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.001..0.435 rows=10000 loops=1)
+                                      Buffers: shared hit=203
+                    ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=1.188..1.188 rows=10000 loops=1)
+                          Buckets: 16384  Batches: 1  Memory Usage: 789kB
+                          Buffers: shared hit=203
+                          ->  Seq Scan on users seller  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.003..0.674 rows=10000 loops=1)
+                                Buffers: shared hit=203
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.032..0.032 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.003..0.017 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.007..0.007 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.004..0.004 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=653
+Planning Time: 1.300 ms
+Execution Time: 11.478 ms
+
+=== R19 run 2 ===
+Sort  (cost=2896.84..2919.34 rows=9000 width=112) (actual time=10.989..11.194 rows=9000 loops=1)
+  Sort Key: t.transaction_date DESC
+  Sort Method: quicksort  Memory: 1636kB
+  Buffers: shared hit=1039
+  ->  Hash Join  (cost=1187.88..2305.73 rows=9000 width=112) (actual time=3.410..9.698 rows=9000 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=1036
+        ->  Hash Join  (cost=1186.70..2268.41 rows=9000 width=110) (actual time=3.400..9.110 rows=9000 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=1035
+              ->  Hash Join  (cost=1175.50..2233.27 rows=9000 width=97) (actual time=3.366..8.421 rows=9000 loops=1)
+                    Hash Cond: (pl.seller_id = seller.user_id)
+                    Buffers: shared hit=1031
+                    ->  Hash Join  (cost=747.50..1781.64 rows=9000 width=73) (actual time=2.142..6.322 rows=9000 loops=1)
+                          Hash Cond: (t.buyer_id = buyer.user_id)
+                          Buffers: shared hit=828
+                          ->  Hash Join  (cost=319.50..1330.00 rows=9000 width=49) (actual time=1.247..4.552 rows=9000 loops=1)
+                                Hash Cond: (pl.listing_id = t.listing_id)
+                                Buffers: shared hit=625
+                                ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=12) (actual time=0.002..1.169 rows=30000 loops=1)
+                                      Buffers: shared hit=508
+                                ->  Hash  (cost=207.00..207.00 rows=9000 width=45) (actual time=1.228..1.228 rows=9000 loops=1)
+                                      Buckets: 16384  Batches: 1  Memory Usage: 861kB
+                                      Buffers: shared hit=117
+                                      ->  Seq Scan on transactions t  (cost=0.00..207.00 rows=9000 width=45) (actual time=0.003..0.593 rows=9000 loops=1)
+                                            Buffers: shared hit=117
+                          ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=0.884..0.884 rows=10000 loops=1)
+                                Buckets: 16384  Batches: 1  Memory Usage: 789kB
+                                Buffers: shared hit=203
+                                ->  Seq Scan on users buyer  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.001..0.381 rows=10000 loops=1)
+                                      Buffers: shared hit=203
+                    ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=1.214..1.214 rows=10000 loops=1)
+                          Buckets: 16384  Batches: 1  Memory Usage: 789kB
+                          Buffers: shared hit=203
+                          ->  Seq Scan on users seller  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.003..0.694 rows=10000 loops=1)
+                                Buffers: shared hit=203
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.031..0.031 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.002..0.016 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.006..0.006 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.004 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=653
+Planning Time: 1.211 ms
+Execution Time: 11.402 ms
+
+=== R19 run 3 ===
+Sort  (cost=2896.84..2919.34 rows=9000 width=112) (actual time=10.854..11.046 rows=9000 loops=1)
+  Sort Key: t.transaction_date DESC
+  Sort Method: quicksort  Memory: 1636kB
+  Buffers: shared hit=1039
+  ->  Hash Join  (cost=1187.88..2305.73 rows=9000 width=112) (actual time=3.426..9.626 rows=9000 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=1036
+        ->  Hash Join  (cost=1186.70..2268.41 rows=9000 width=110) (actual time=3.414..9.057 rows=9000 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=1035
+              ->  Hash Join  (cost=1175.50..2233.27 rows=9000 width=97) (actual time=3.370..8.389 rows=9000 loops=1)
+                    Hash Cond: (pl.seller_id = seller.user_id)
+                    Buffers: shared hit=1031
+                    ->  Hash Join  (cost=747.50..1781.64 rows=9000 width=73) (actual time=2.122..6.236 rows=9000 loops=1)
+                          Hash Cond: (t.buyer_id = buyer.user_id)
+                          Buffers: shared hit=828
+                          ->  Hash Join  (cost=319.50..1330.00 rows=9000 width=49) (actual time=1.152..4.412 rows=9000 loops=1)
+                                Hash Cond: (pl.listing_id = t.listing_id)
+                                Buffers: shared hit=625
+                                ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=12) (actual time=0.002..1.156 rows=30000 loops=1)
+                                      Buffers: shared hit=508
+                                ->  Hash  (cost=207.00..207.00 rows=9000 width=45) (actual time=1.139..1.139 rows=9000 loops=1)
+                                      Buckets: 16384  Batches: 1  Memory Usage: 861kB
+                                      Buffers: shared hit=117
+                                      ->  Seq Scan on transactions t  (cost=0.00..207.00 rows=9000 width=45) (actual time=0.004..0.548 rows=9000 loops=1)
+                                            Buffers: shared hit=117
+                          ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=0.960..0.960 rows=10000 loops=1)
+                                Buckets: 16384  Batches: 1  Memory Usage: 789kB
+                                Buffers: shared hit=203
+                                ->  Seq Scan on users buyer  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.003..0.423 rows=10000 loops=1)
+                                      Buffers: shared hit=203
+                    ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=1.237..1.237 rows=10000 loops=1)
+                          Buckets: 16384  Batches: 1  Memory Usage: 789kB
+                          Buffers: shared hit=203
+                          ->  Seq Scan on users seller  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.018..0.706 rows=10000 loops=1)
+                                Buffers: shared hit=203
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.040..0.040 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.003..0.021 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.008..0.008 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.004 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=653
+Planning Time: 1.146 ms
+Execution Time: 11.234 ms
+

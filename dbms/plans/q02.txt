@@ -1,6 +1,0 @@
--- Query 2: List all active phone brands.
--- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
-
--> Sort: brands.brand_name  (cost=1.05 rows=8) (actual time=0.0163..0.0166 rows=8 loops=1)
-    -> Filter: (brands.is_active = true)  (cost=1.05 rows=8) (actual time=0.00783..0.0105 rows=8 loops=1)
-        -> Table scan on Brands  (cost=1.05 rows=8) (actual time=0.00746..0.01 rows=8 loops=1)

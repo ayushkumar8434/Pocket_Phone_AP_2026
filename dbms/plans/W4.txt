@@ -1,0 +1,40 @@
+-- WRITE W4: Create a new pending transaction.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+-- Run inside BEGIN ... ROLLBACK, so the data does not change.
+
+=== W4 run 1 ===
+Insert on transactions  (cost=0.00..0.02 rows=0 width=0) (actual time=0.202..0.202 rows=0 loops=1)
+  Buffers: shared hit=152
+  ->  Result  (cost=0.00..0.02 rows=1 width=404) (actual time=0.018..0.018 rows=1 loops=1)
+        Buffers: shared hit=10
+Planning:
+  Buffers: shared hit=9
+Planning Time: 0.037 ms
+Trigger for constraint fk_transaction_listing: time=0.359 calls=1
+Trigger for constraint fk_transaction_buyer: time=0.184 calls=1
+Execution Time: 0.756 ms
+
+=== W4 run 2 ===
+Insert on transactions  (cost=0.00..0.02 rows=0 width=0) (actual time=0.179..0.180 rows=0 loops=1)
+  Buffers: shared hit=151
+  ->  Result  (cost=0.00..0.02 rows=1 width=404) (actual time=0.018..0.018 rows=1 loops=1)
+        Buffers: shared hit=10
+Planning:
+  Buffers: shared hit=9
+Planning Time: 0.036 ms
+Trigger for constraint fk_transaction_listing: time=0.556 calls=1
+Trigger for constraint fk_transaction_buyer: time=0.313 calls=1
+Execution Time: 1.059 ms
+
+=== W4 run 3 ===
+Insert on transactions  (cost=0.00..0.02 rows=0 width=0) (actual time=0.187..0.188 rows=0 loops=1)
+  Buffers: shared hit=151
+  ->  Result  (cost=0.00..0.02 rows=1 width=404) (actual time=0.020..0.020 rows=1 loops=1)
+        Buffers: shared hit=10
+Planning:
+  Buffers: shared hit=9
+Planning Time: 0.039 ms
+Trigger for constraint fk_transaction_listing: time=0.498 calls=1
+Trigger for constraint fk_transaction_buyer: time=0.176 calls=1
+Execution Time: 0.873 ms
+

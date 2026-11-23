@@ -1,0 +1,114 @@
+-- READ R37: Get a user's purchase history and shipping status.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R37 run 1 ===
+Sort  (cost=65.83..65.83 rows=3 width=81) (actual time=0.057..0.057 rows=3 loops=1)
+  Sort Key: t.transaction_date DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=38
+  ->  Nested Loop Left Join  (cost=5.16..65.80 rows=3 width=81) (actual time=0.025..0.048 rows=3 loops=1)
+        Buffers: shared hit=35
+        ->  Nested Loop  (cost=4.88..40.89 rows=3 width=65) (actual time=0.022..0.038 rows=3 loops=1)
+              Buffers: shared hit=26
+              ->  Nested Loop  (cost=4.74..40.32 rows=3 width=63) (actual time=0.020..0.035 rows=3 loops=1)
+                    Buffers: shared hit=20
+                    ->  Nested Loop  (cost=4.60..39.82 rows=3 width=50) (actual time=0.009..0.021 rows=3 loops=1)
+                          Buffers: shared hit=14
+                          ->  Bitmap Heap Scan on transactions t  (cost=4.31..14.90 rows=3 width=41) (actual time=0.006..0.010 rows=3 loops=1)
+                                Recheck Cond: (buyer_id = 187)
+                                Heap Blocks: exact=3
+                                Buffers: shared hit=5
+                                ->  Bitmap Index Scan on idx_transaction_buyer_date  (cost=0.00..4.31 rows=3 width=0) (actual time=0.005..0.005 rows=3 loops=1)
+                                      Index Cond: (buyer_id = 187)
+                                      Buffers: shared hit=2
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..8.30 rows=1 width=17) (actual time=0.003..0.003 rows=1 loops=3)
+                                Index Cond: (listing_id = t.listing_id)
+                                Buffers: shared hit=9
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.004..0.004 rows=1 loops=3)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=6
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.001..0.001 rows=1 loops=3)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=6
+        ->  Index Scan using shipping_details_transaction_id_key on shipping_details sd  (cost=0.29..8.30 rows=1 width=20) (actual time=0.003..0.003 rows=1 loops=3)
+              Index Cond: (transaction_id = t.transaction_id)
+              Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=654
+Planning Time: 1.129 ms
+Execution Time: 0.090 ms
+
+=== R37 run 2 ===
+Sort  (cost=65.83..65.83 rows=3 width=81) (actual time=0.053..0.054 rows=3 loops=1)
+  Sort Key: t.transaction_date DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=38
+  ->  Nested Loop Left Join  (cost=5.16..65.80 rows=3 width=81) (actual time=0.020..0.043 rows=3 loops=1)
+        Buffers: shared hit=35
+        ->  Nested Loop  (cost=4.88..40.89 rows=3 width=65) (actual time=0.017..0.034 rows=3 loops=1)
+              Buffers: shared hit=26
+              ->  Nested Loop  (cost=4.74..40.32 rows=3 width=63) (actual time=0.014..0.030 rows=3 loops=1)
+                    Buffers: shared hit=20
+                    ->  Nested Loop  (cost=4.60..39.82 rows=3 width=50) (actual time=0.010..0.022 rows=3 loops=1)
+                          Buffers: shared hit=14
+                          ->  Bitmap Heap Scan on transactions t  (cost=4.31..14.90 rows=3 width=41) (actual time=0.007..0.011 rows=3 loops=1)
+                                Recheck Cond: (buyer_id = 187)
+                                Heap Blocks: exact=3
+                                Buffers: shared hit=5
+                                ->  Bitmap Index Scan on idx_transaction_buyer_date  (cost=0.00..4.31 rows=3 width=0) (actual time=0.005..0.005 rows=3 loops=1)
+                                      Index Cond: (buyer_id = 187)
+                                      Buffers: shared hit=2
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..8.30 rows=1 width=17) (actual time=0.003..0.003 rows=1 loops=3)
+                                Index Cond: (listing_id = t.listing_id)
+                                Buffers: shared hit=9
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.002..0.002 rows=1 loops=3)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=6
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.001..0.001 rows=1 loops=3)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=6
+        ->  Index Scan using shipping_details_transaction_id_key on shipping_details sd  (cost=0.29..8.30 rows=1 width=20) (actual time=0.003..0.003 rows=1 loops=3)
+              Index Cond: (transaction_id = t.transaction_id)
+              Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=653
+Planning Time: 1.175 ms
+Execution Time: 0.089 ms
+
+=== R37 run 3 ===
+Sort  (cost=65.83..65.83 rows=3 width=81) (actual time=0.059..0.059 rows=3 loops=1)
+  Sort Key: t.transaction_date DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=38
+  ->  Nested Loop Left Join  (cost=5.16..65.80 rows=3 width=81) (actual time=0.021..0.047 rows=3 loops=1)
+        Buffers: shared hit=35
+        ->  Nested Loop  (cost=4.88..40.89 rows=3 width=65) (actual time=0.018..0.036 rows=3 loops=1)
+              Buffers: shared hit=26
+              ->  Nested Loop  (cost=4.74..40.32 rows=3 width=63) (actual time=0.015..0.032 rows=3 loops=1)
+                    Buffers: shared hit=20
+                    ->  Nested Loop  (cost=4.60..39.82 rows=3 width=50) (actual time=0.010..0.024 rows=3 loops=1)
+                          Buffers: shared hit=14
+                          ->  Bitmap Heap Scan on transactions t  (cost=4.31..14.90 rows=3 width=41) (actual time=0.007..0.011 rows=3 loops=1)
+                                Recheck Cond: (buyer_id = 187)
+                                Heap Blocks: exact=3
+                                Buffers: shared hit=5
+                                ->  Bitmap Index Scan on idx_transaction_buyer_date  (cost=0.00..4.31 rows=3 width=0) (actual time=0.005..0.005 rows=3 loops=1)
+                                      Index Cond: (buyer_id = 187)
+                                      Buffers: shared hit=2
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..8.30 rows=1 width=17) (actual time=0.003..0.003 rows=1 loops=3)
+                                Index Cond: (listing_id = t.listing_id)
+                                Buffers: shared hit=9
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.002..0.002 rows=1 loops=3)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=6
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.001..0.001 rows=1 loops=3)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=6
+        ->  Index Scan using shipping_details_transaction_id_key on shipping_details sd  (cost=0.29..8.30 rows=1 width=20) (actual time=0.003..0.003 rows=1 loops=3)
+              Index Cond: (transaction_id = t.transaction_id)
+              Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=653
+Planning Time: 1.195 ms
+Execution Time: 0.102 ms
+

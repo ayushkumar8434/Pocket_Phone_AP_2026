@@ -1,0 +1,40 @@
+-- WRITE W5: Mark a listing sold only when it is still available or reserved.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+-- Run inside BEGIN ... ROLLBACK, so the data does not change.
+
+=== W5 run 1 ===
+Update on phone_listings  (cost=0.29..8.31 rows=0 width=0) (actual time=0.256..0.257 rows=0 loops=1)
+  Buffers: shared hit=45
+  ->  Index Scan using phone_listings_pkey on phone_listings  (cost=0.29..8.31 rows=1 width=44) (actual time=0.012..0.013 rows=1 loops=1)
+        Index Cond: (listing_id = 1)
+        Filter: ((status)::text = ANY ('{available,reserved}'::text[]))
+        Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=239
+Planning Time: 0.360 ms
+Execution Time: 0.322 ms
+
+=== W5 run 2 ===
+Update on phone_listings  (cost=0.29..8.31 rows=0 width=0) (actual time=0.132..0.132 rows=0 loops=1)
+  Buffers: shared hit=47
+  ->  Index Scan using phone_listings_pkey on phone_listings  (cost=0.29..8.31 rows=1 width=44) (actual time=0.010..0.010 rows=1 loops=1)
+        Index Cond: (listing_id = 1)
+        Filter: ((status)::text = ANY ('{available,reserved}'::text[]))
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=239
+Planning Time: 0.327 ms
+Execution Time: 0.163 ms
+
+=== W5 run 3 ===
+Update on phone_listings  (cost=0.29..8.31 rows=0 width=0) (actual time=0.291..0.292 rows=0 loops=1)
+  Buffers: shared hit=47
+  ->  Index Scan using phone_listings_pkey on phone_listings  (cost=0.29..8.31 rows=1 width=44) (actual time=0.019..0.020 rows=1 loops=1)
+        Index Cond: (listing_id = 1)
+        Filter: ((status)::text = ANY ('{available,reserved}'::text[]))
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=239
+Planning Time: 0.432 ms
+Execution Time: 0.366 ms
+

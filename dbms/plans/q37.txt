@@ -1,8 +1,0 @@
--- Query 37: Create a new pending transaction.
--- EXPLAIN on MySQL, sample data (see 05_query_timings.md)
-
-+----+-------------+--------------+------------+------+---------------+------+---------+------+------+----------+-------+
-| id | select_type | table        | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra |
-+----+-------------+--------------+------------+------+---------------+------+---------+------+------+----------+-------+
-|  1 | INSERT      | Transactions | NULL       | ALL  | NULL          | NULL | NULL    | NULL | NULL |     NULL | NULL  |
-+----+-------------+--------------+------------+------+---------------+------+---------+------+------+----------+-------+

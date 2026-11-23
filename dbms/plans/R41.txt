@@ -1,0 +1,114 @@
+-- READ R41: Estimate value from recent similar model listings.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R41 run 1 ===
+GroupAggregate  (cost=152.46..152.50 rows=1 width=134) (actual time=0.337..0.337 rows=1 loops=1)
+  Group Key: pl.ram, pl.condition
+  Buffers: shared hit=165
+  ->  Sort  (cost=152.46..152.47 rows=1 width=40) (actual time=0.328..0.329 rows=18 loops=1)
+        Sort Key: pl.ram, pl.condition
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=165
+        ->  Nested Loop  (cost=100.34..152.45 rows=1 width=40) (actual time=0.133..0.312 rows=18 loops=1)
+              Buffers: shared hit=159
+              ->  Nested Loop  (cost=100.05..144.13 rows=1 width=34) (actual time=0.129..0.250 rows=18 loops=1)
+                    Buffers: shared hit=105
+                    ->  Bitmap Heap Scan on phone_listings pl  (cost=100.05..136.12 rows=1 width=21) (actual time=0.118..0.139 rows=18 loops=1)
+                          Recheck Cond: ((model_id = 201) AND ((status)::text = ANY ('{available,sold}'::text[])) AND (listing_date >= (CURRENT_DATE - '3 mons'::interval)))
+                          Filter: ((storage_capacity = 64) AND ((condition)::text = ANY ('{new,like_new,good}'::text[])))
+                          Heap Blocks: exact=15
+                          Buffers: shared hit=33
+                          ->  BitmapAnd  (cost=100.05..100.05 rows=10 width=0) (actual time=0.112..0.112 rows=0 loops=1)
+                                Buffers: shared hit=18
+                                ->  Bitmap Index Scan on idx_listing_model_status  (cost=0.00..9.31 rows=75 width=0) (actual time=0.013..0.013 rows=94 loops=1)
+                                      Index Cond: ((model_id = 201) AND ((status)::text = ANY ('{available,sold}'::text[])))
+                                      Buffers: shared hit=2
+                                ->  Bitmap Index Scan on idx_listing_date  (cost=0.00..90.48 rows=4025 width=0) (actual time=0.096..0.096 rows=4029 loops=1)
+                                      Index Cond: (listing_date >= (CURRENT_DATE - '3 mons'::interval))
+                                      Buffers: shared hit=16
+                    ->  Seq Scan on phone_models pm  (cost=0.00..8.00 rows=1 width=17) (actual time=0.004..0.006 rows=1 loops=18)
+                          Filter: (model_id = 201)
+                          Rows Removed by Filter: 319
+                          Buffers: shared hit=72
+              ->  Index Scan using idx_listing_current on pricing p  (cost=0.29..8.31 rows=1 width=14) (actual time=0.003..0.003 rows=1 loops=18)
+                    Index Cond: ((listing_id = pl.listing_id) AND (is_current = true))
+                    Buffers: shared hit=54
+Planning:
+  Buffers: shared hit=485
+Planning Time: 0.879 ms
+Execution Time: 0.370 ms
+
+=== R41 run 2 ===
+GroupAggregate  (cost=152.46..152.50 rows=1 width=134) (actual time=0.508..0.509 rows=1 loops=1)
+  Group Key: pl.ram, pl.condition
+  Buffers: shared hit=165
+  ->  Sort  (cost=152.46..152.47 rows=1 width=40) (actual time=0.497..0.498 rows=18 loops=1)
+        Sort Key: pl.ram, pl.condition
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=165
+        ->  Nested Loop  (cost=100.34..152.45 rows=1 width=40) (actual time=0.254..0.479 rows=18 loops=1)
+              Buffers: shared hit=159
+              ->  Nested Loop  (cost=100.05..144.13 rows=1 width=34) (actual time=0.241..0.395 rows=18 loops=1)
+                    Buffers: shared hit=105
+                    ->  Bitmap Heap Scan on phone_listings pl  (cost=100.05..136.12 rows=1 width=21) (actual time=0.197..0.224 rows=18 loops=1)
+                          Recheck Cond: ((model_id = 201) AND ((status)::text = ANY ('{available,sold}'::text[])) AND (listing_date >= (CURRENT_DATE - '3 mons'::interval)))
+                          Filter: ((storage_capacity = 64) AND ((condition)::text = ANY ('{new,like_new,good}'::text[])))
+                          Heap Blocks: exact=15
+                          Buffers: shared hit=33
+                          ->  BitmapAnd  (cost=100.05..100.05 rows=10 width=0) (actual time=0.190..0.190 rows=0 loops=1)
+                                Buffers: shared hit=18
+                                ->  Bitmap Index Scan on idx_listing_model_status  (cost=0.00..9.31 rows=75 width=0) (actual time=0.013..0.013 rows=94 loops=1)
+                                      Index Cond: ((model_id = 201) AND ((status)::text = ANY ('{available,sold}'::text[])))
+                                      Buffers: shared hit=2
+                                ->  Bitmap Index Scan on idx_listing_date  (cost=0.00..90.48 rows=4025 width=0) (actual time=0.173..0.173 rows=4029 loops=1)
+                                      Index Cond: (listing_date >= (CURRENT_DATE - '3 mons'::interval))
+                                      Buffers: shared hit=16
+                    ->  Seq Scan on phone_models pm  (cost=0.00..8.00 rows=1 width=17) (actual time=0.007..0.009 rows=1 loops=18)
+                          Filter: (model_id = 201)
+                          Rows Removed by Filter: 319
+                          Buffers: shared hit=72
+              ->  Index Scan using idx_listing_current on pricing p  (cost=0.29..8.31 rows=1 width=14) (actual time=0.004..0.004 rows=1 loops=18)
+                    Index Cond: ((listing_id = pl.listing_id) AND (is_current = true))
+                    Buffers: shared hit=54
+Planning:
+  Buffers: shared hit=485
+Planning Time: 0.852 ms
+Execution Time: 0.547 ms
+
+=== R41 run 3 ===
+GroupAggregate  (cost=152.46..152.50 rows=1 width=134) (actual time=0.389..0.389 rows=1 loops=1)
+  Group Key: pl.ram, pl.condition
+  Buffers: shared hit=165
+  ->  Sort  (cost=152.46..152.47 rows=1 width=40) (actual time=0.379..0.379 rows=18 loops=1)
+        Sort Key: pl.ram, pl.condition
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=165
+        ->  Nested Loop  (cost=100.34..152.45 rows=1 width=40) (actual time=0.121..0.323 rows=18 loops=1)
+              Buffers: shared hit=159
+              ->  Nested Loop  (cost=100.05..144.13 rows=1 width=34) (actual time=0.116..0.252 rows=18 loops=1)
+                    Buffers: shared hit=105
+                    ->  Bitmap Heap Scan on phone_listings pl  (cost=100.05..136.12 rows=1 width=21) (actual time=0.106..0.130 rows=18 loops=1)
+                          Recheck Cond: ((model_id = 201) AND ((status)::text = ANY ('{available,sold}'::text[])) AND (listing_date >= (CURRENT_DATE - '3 mons'::interval)))
+                          Filter: ((storage_capacity = 64) AND ((condition)::text = ANY ('{new,like_new,good}'::text[])))
+                          Heap Blocks: exact=15
+                          Buffers: shared hit=33
+                          ->  BitmapAnd  (cost=100.05..100.05 rows=10 width=0) (actual time=0.101..0.101 rows=0 loops=1)
+                                Buffers: shared hit=18
+                                ->  Bitmap Index Scan on idx_listing_model_status  (cost=0.00..9.31 rows=75 width=0) (actual time=0.012..0.012 rows=94 loops=1)
+                                      Index Cond: ((model_id = 201) AND ((status)::text = ANY ('{available,sold}'::text[])))
+                                      Buffers: shared hit=2
+                                ->  Bitmap Index Scan on idx_listing_date  (cost=0.00..90.48 rows=4025 width=0) (actual time=0.085..0.085 rows=4029 loops=1)
+                                      Index Cond: (listing_date >= (CURRENT_DATE - '3 mons'::interval))
+                                      Buffers: shared hit=16
+                    ->  Seq Scan on phone_models pm  (cost=0.00..8.00 rows=1 width=17) (actual time=0.004..0.006 rows=1 loops=18)
+                          Filter: (model_id = 201)
+                          Rows Removed by Filter: 319
+                          Buffers: shared hit=72
+              ->  Index Scan using idx_listing_current on pricing p  (cost=0.29..8.31 rows=1 width=14) (actual time=0.004..0.004 rows=1 loops=18)
+                    Index Cond: ((listing_id = pl.listing_id) AND (is_current = true))
+                    Buffers: shared hit=54
+Planning:
+  Buffers: shared hit=485
+Planning Time: 0.746 ms
+Execution Time: 0.431 ms
+

@@ -1,0 +1,43 @@
+-- WRITE W7: Complete a pending payment and confirm its order.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+-- Run inside BEGIN ... ROLLBACK, so the data does not change.
+
+=== W7 run 1 ===
+Update on transactions  (cost=0.29..8.30 rows=0 width=0) (actual time=0.382..0.382 rows=0 loops=1)
+  Buffers: shared hit=45
+  ->  Index Scan using transactions_pkey on transactions  (cost=0.29..8.30 rows=1 width=82) (actual time=0.024..0.025 rows=1 loops=1)
+        Index Cond: (transaction_id = 11)
+        Filter: ((payment_status)::text = 'pending'::text)
+        Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=161
+Planning Time: 0.652 ms
+Trigger trg_update_listing_status_after_transaction: time=3.411 calls=1
+Execution Time: 3.872 ms
+
+=== W7 run 2 ===
+Update on transactions  (cost=0.29..8.30 rows=0 width=0) (actual time=0.330..0.330 rows=0 loops=1)
+  Buffers: shared hit=47
+  ->  Index Scan using transactions_pkey on transactions  (cost=0.29..8.30 rows=1 width=82) (actual time=0.027..0.028 rows=1 loops=1)
+        Index Cond: (transaction_id = 11)
+        Filter: ((payment_status)::text = 'pending'::text)
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=161
+Planning Time: 1.156 ms
+Trigger trg_update_listing_status_after_transaction: time=2.436 calls=1
+Execution Time: 2.870 ms
+
+=== W7 run 3 ===
+Update on transactions  (cost=0.29..8.30 rows=0 width=0) (actual time=0.121..0.121 rows=0 loops=1)
+  Buffers: shared hit=47
+  ->  Index Scan using transactions_pkey on transactions  (cost=0.29..8.30 rows=1 width=82) (actual time=0.009..0.009 rows=1 loops=1)
+        Index Cond: (transaction_id = 11)
+        Filter: ((payment_status)::text = 'pending'::text)
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=161
+Planning Time: 0.274 ms
+Trigger trg_update_listing_status_after_transaction: time=2.442 calls=1
+Execution Time: 2.599 ms
+

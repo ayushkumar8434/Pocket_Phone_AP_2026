@@ -1,0 +1,37 @@
+-- WRITE W8: Mark a shipment as shipped.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+-- Run inside BEGIN ... ROLLBACK, so the data does not change.
+
+=== W8 run 1 ===
+Update on shipping_details  (cost=0.29..8.31 rows=0 width=0) (actual time=0.126..0.126 rows=0 loops=1)
+  Buffers: shared hit=35
+  ->  Index Scan using shipping_details_pkey on shipping_details  (cost=0.29..8.31 rows=1 width=290) (actual time=0.011..0.012 rows=1 loops=1)
+        Index Cond: (shipping_id = 1)
+        Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=117
+Planning Time: 0.277 ms
+Execution Time: 0.158 ms
+
+=== W8 run 2 ===
+Update on shipping_details  (cost=0.29..8.31 rows=0 width=0) (actual time=0.341..0.341 rows=0 loops=1)
+  Buffers: shared hit=37
+  ->  Index Scan using shipping_details_pkey on shipping_details  (cost=0.29..8.31 rows=1 width=290) (actual time=0.053..0.054 rows=1 loops=1)
+        Index Cond: (shipping_id = 1)
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=117
+Planning Time: 0.885 ms
+Execution Time: 0.482 ms
+
+=== W8 run 3 ===
+Update on shipping_details  (cost=0.29..8.31 rows=0 width=0) (actual time=0.275..0.276 rows=0 loops=1)
+  Buffers: shared hit=37
+  ->  Index Scan using shipping_details_pkey on shipping_details  (cost=0.29..8.31 rows=1 width=290) (actual time=0.039..0.041 rows=1 loops=1)
+        Index Cond: (shipping_id = 1)
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=117
+Planning Time: 0.926 ms
+Execution Time: 0.499 ms
+

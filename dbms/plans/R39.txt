@@ -1,0 +1,102 @@
+-- READ R39: Get a user's wishlist with current prices.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R39 run 1 ===
+Sort  (cost=17.37..17.37 rows=1 width=64) (actual time=0.025..0.026 rows=1 loops=1)
+  Sort Key: w.added_date DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=16
+  ->  Nested Loop Left Join  (cost=1.14..17.36 rows=1 width=64) (actual time=0.018..0.019 rows=1 loops=1)
+        Buffers: shared hit=13
+        ->  Nested Loop  (cost=0.85..16.97 rows=1 width=62) (actual time=0.014..0.015 rows=1 loops=1)
+              Buffers: shared hit=10
+              ->  Nested Loop  (cost=0.72..16.77 rows=1 width=60) (actual time=0.012..0.013 rows=1 loops=1)
+                    Buffers: shared hit=8
+                    ->  Nested Loop  (cost=0.57..16.61 rows=1 width=47) (actual time=0.008..0.009 rows=1 loops=1)
+                          Buffers: shared hit=6
+                          ->  Index Scan using uk_user_listing on wishlist w  (cost=0.28..8.30 rows=1 width=16) (actual time=0.005..0.005 rows=1 loops=1)
+                                Index Cond: (user_id = 3)
+                                Buffers: shared hit=3
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..8.30 rows=1 width=35) (actual time=0.002..0.002 rows=1 loops=1)
+                                Index Cond: (listing_id = w.listing_id)
+                                Buffers: shared hit=3
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.003..0.003 rows=1 loops=1)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=2
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.002..0.002 rows=1 loops=1)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=2
+        ->  Index Scan using idx_listing_current on pricing p  (cost=0.29..0.38 rows=1 width=10) (actual time=0.004..0.004 rows=1 loops=1)
+              Index Cond: ((listing_id = pl.listing_id) AND (is_current = true))
+              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=595
+Planning Time: 0.972 ms
+Execution Time: 0.053 ms
+
+=== R39 run 2 ===
+Sort  (cost=17.37..17.37 rows=1 width=64) (actual time=0.024..0.025 rows=1 loops=1)
+  Sort Key: w.added_date DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=16
+  ->  Nested Loop Left Join  (cost=1.14..17.36 rows=1 width=64) (actual time=0.017..0.018 rows=1 loops=1)
+        Buffers: shared hit=13
+        ->  Nested Loop  (cost=0.85..16.97 rows=1 width=62) (actual time=0.014..0.014 rows=1 loops=1)
+              Buffers: shared hit=10
+              ->  Nested Loop  (cost=0.72..16.77 rows=1 width=60) (actual time=0.012..0.012 rows=1 loops=1)
+                    Buffers: shared hit=8
+                    ->  Nested Loop  (cost=0.57..16.61 rows=1 width=47) (actual time=0.008..0.009 rows=1 loops=1)
+                          Buffers: shared hit=6
+                          ->  Index Scan using uk_user_listing on wishlist w  (cost=0.28..8.30 rows=1 width=16) (actual time=0.005..0.005 rows=1 loops=1)
+                                Index Cond: (user_id = 3)
+                                Buffers: shared hit=3
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..8.30 rows=1 width=35) (actual time=0.002..0.002 rows=1 loops=1)
+                                Index Cond: (listing_id = w.listing_id)
+                                Buffers: shared hit=3
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.003..0.003 rows=1 loops=1)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=2
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.002..0.002 rows=1 loops=1)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=2
+        ->  Index Scan using idx_listing_current on pricing p  (cost=0.29..0.38 rows=1 width=10) (actual time=0.003..0.003 rows=1 loops=1)
+              Index Cond: ((listing_id = pl.listing_id) AND (is_current = true))
+              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=595
+Planning Time: 0.934 ms
+Execution Time: 0.054 ms
+
+=== R39 run 3 ===
+Sort  (cost=17.37..17.37 rows=1 width=64) (actual time=0.030..0.031 rows=1 loops=1)
+  Sort Key: w.added_date DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=16
+  ->  Nested Loop Left Join  (cost=1.14..17.36 rows=1 width=64) (actual time=0.022..0.023 rows=1 loops=1)
+        Buffers: shared hit=13
+        ->  Nested Loop  (cost=0.85..16.97 rows=1 width=62) (actual time=0.017..0.018 rows=1 loops=1)
+              Buffers: shared hit=10
+              ->  Nested Loop  (cost=0.72..16.77 rows=1 width=60) (actual time=0.014..0.015 rows=1 loops=1)
+                    Buffers: shared hit=8
+                    ->  Nested Loop  (cost=0.57..16.61 rows=1 width=47) (actual time=0.010..0.010 rows=1 loops=1)
+                          Buffers: shared hit=6
+                          ->  Index Scan using uk_user_listing on wishlist w  (cost=0.28..8.30 rows=1 width=16) (actual time=0.005..0.006 rows=1 loops=1)
+                                Index Cond: (user_id = 3)
+                                Buffers: shared hit=3
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..8.30 rows=1 width=35) (actual time=0.003..0.003 rows=1 loops=1)
+                                Index Cond: (listing_id = w.listing_id)
+                                Buffers: shared hit=3
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.004..0.004 rows=1 loops=1)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=2
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.003..0.003 rows=1 loops=1)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=2
+        ->  Index Scan using idx_listing_current on pricing p  (cost=0.29..0.38 rows=1 width=10) (actual time=0.004..0.005 rows=1 loops=1)
+              Index Cond: ((listing_id = pl.listing_id) AND (is_current = true))
+              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=595
+Planning Time: 1.040 ms
+Execution Time: 0.064 ms
+

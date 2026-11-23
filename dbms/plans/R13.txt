@@ -1,0 +1,99 @@
+-- READ R13: Count total, available, and sold listings by brand.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R13 run 1 ===
+Sort  (cost=1470.84..1470.86 rows=8 width=34) (actual time=7.284..7.285 rows=8 loops=1)
+  Sort Key: (count(pl.listing_id)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=516
+  ->  HashAggregate  (cost=1470.64..1470.72 rows=8 width=34) (actual time=7.277..7.278 rows=8 loops=1)
+        Group Key: b.brand_id
+        Batches: 1  Memory Usage: 24kB
+        Buffers: shared hit=513
+        ->  Hash Right Join  (cost=12.38..1020.64 rows=30000 width=22) (actual time=0.039..5.313 rows=30000 loops=1)
+              Hash Cond: (pm.brand_id = b.brand_id)
+              Buffers: shared hit=513
+              ->  Hash Right Join  (cost=11.20..899.00 rows=30000 width=16) (actual time=0.030..3.622 rows=30000 loops=1)
+                    Hash Cond: (pl.model_id = pm.model_id)
+                    Buffers: shared hit=512
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=16) (actual time=0.002..1.089 rows=30000 loops=1)
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=7.20..7.20 rows=320 width=8) (actual time=0.025..0.026 rows=320 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 21kB
+                          Buffers: shared hit=4
+                          ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=8) (actual time=0.002..0.015 rows=320 loops=1)
+                                Buffers: shared hit=4
+              ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.005..0.006 rows=8 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.003 rows=8 loops=1)
+                          Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=374
+Planning Time: 0.634 ms
+Execution Time: 7.323 ms
+
+=== R13 run 2 ===
+Sort  (cost=1470.84..1470.86 rows=8 width=34) (actual time=7.275..7.276 rows=8 loops=1)
+  Sort Key: (count(pl.listing_id)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=516
+  ->  HashAggregate  (cost=1470.64..1470.72 rows=8 width=34) (actual time=7.268..7.269 rows=8 loops=1)
+        Group Key: b.brand_id
+        Batches: 1  Memory Usage: 24kB
+        Buffers: shared hit=513
+        ->  Hash Right Join  (cost=12.38..1020.64 rows=30000 width=22) (actual time=0.038..5.307 rows=30000 loops=1)
+              Hash Cond: (pm.brand_id = b.brand_id)
+              Buffers: shared hit=513
+              ->  Hash Right Join  (cost=11.20..899.00 rows=30000 width=16) (actual time=0.030..3.632 rows=30000 loops=1)
+                    Hash Cond: (pl.model_id = pm.model_id)
+                    Buffers: shared hit=512
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=16) (actual time=0.002..1.102 rows=30000 loops=1)
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=7.20..7.20 rows=320 width=8) (actual time=0.025..0.026 rows=320 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 21kB
+                          Buffers: shared hit=4
+                          ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=8) (actual time=0.002..0.015 rows=320 loops=1)
+                                Buffers: shared hit=4
+              ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.005..0.005 rows=8 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.003 rows=8 loops=1)
+                          Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=374
+Planning Time: 0.623 ms
+Execution Time: 7.320 ms
+
+=== R13 run 3 ===
+Sort  (cost=1470.84..1470.86 rows=8 width=34) (actual time=7.199..7.200 rows=8 loops=1)
+  Sort Key: (count(pl.listing_id)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=516
+  ->  HashAggregate  (cost=1470.64..1470.72 rows=8 width=34) (actual time=7.191..7.193 rows=8 loops=1)
+        Group Key: b.brand_id
+        Batches: 1  Memory Usage: 24kB
+        Buffers: shared hit=513
+        ->  Hash Right Join  (cost=12.38..1020.64 rows=30000 width=22) (actual time=0.043..5.237 rows=30000 loops=1)
+              Hash Cond: (pm.brand_id = b.brand_id)
+              Buffers: shared hit=513
+              ->  Hash Right Join  (cost=11.20..899.00 rows=30000 width=16) (actual time=0.033..3.575 rows=30000 loops=1)
+                    Hash Cond: (pl.model_id = pm.model_id)
+                    Buffers: shared hit=512
+                    ->  Seq Scan on phone_listings pl  (cost=0.00..808.00 rows=30000 width=16) (actual time=0.002..1.084 rows=30000 loops=1)
+                          Buffers: shared hit=508
+                    ->  Hash  (cost=7.20..7.20 rows=320 width=8) (actual time=0.027..0.027 rows=320 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 21kB
+                          Buffers: shared hit=4
+                          ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=8) (actual time=0.002..0.016 rows=320 loops=1)
+                                Buffers: shared hit=4
+              ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.006..0.007 rows=8 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.004 rows=8 loops=1)
+                          Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=374
+Planning Time: 0.724 ms
+Execution Time: 7.244 ms
+

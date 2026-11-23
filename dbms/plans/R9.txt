@@ -1,0 +1,129 @@
+-- READ R9: Search available listings by partial model name.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R9 run 1 ===
+Sort  (cost=1928.98..1934.46 rows=2194 width=37) (actual time=7.257..7.298 rows=2250 loops=1)
+  Sort Key: pm.release_year DESC, p.final_price
+  Sort Method: quicksort  Memory: 233kB
+  Buffers: shared hit=855
+  ->  Hash Join  (cost=967.97..1807.22 rows=2194 width=37) (actual time=3.059..5.996 rows=2250 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=849
+        ->  Hash Join  (cost=966.79..1797.23 rows=2194 width=35) (actual time=3.050..5.843 rows=2250 loops=1)
+              Hash Cond: (p.listing_id = pl.listing_id)
+              Buffers: shared hit=848
+              ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.002..1.704 rows=30000 loops=1)
+                    Filter: is_current
+                    Rows Removed by Filter: 6000
+                    Buffers: shared hit=336
+              ->  Hash  (cost=939.36..939.36 rows=2194 width=33) (actual time=3.041..3.042 rows=2250 loops=1)
+                    Buckets: 4096  Batches: 1  Memory Usage: 182kB
+                    Buffers: shared hit=512
+                    ->  Hash Join  (cost=8.49..939.36 rows=2194 width=33) (actual time=0.032..2.892 rows=2250 loops=1)
+                          Hash Cond: (pl.model_id = pm.model_id)
+                          Buffers: shared hit=512
+                          ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=16) (actual time=0.002..2.286 rows=18000 loops=1)
+                                Filter: ((status)::text = 'available'::text)
+                                Rows Removed by Filter: 12000
+                                Buffers: shared hit=508
+                          ->  Hash  (cost=8.00..8.00 rows=39 width=25) (actual time=0.024..0.024 rows=40 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 11kB
+                                Buffers: shared hit=4
+                                ->  Seq Scan on phone_models pm  (cost=0.00..8.00 rows=39 width=25) (actual time=0.002..0.021 rows=40 loops=1)
+                                      Filter: ((model_name)::text ~~ '%iPhone%'::text)
+                                      Rows Removed by Filter: 280
+                                      Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.006..0.007 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.003 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=472
+Planning Time: 1.613 ms
+Execution Time: 7.388 ms
+
+=== R9 run 2 ===
+Sort  (cost=1928.98..1934.46 rows=2194 width=37) (actual time=7.246..7.287 rows=2250 loops=1)
+  Sort Key: pm.release_year DESC, p.final_price
+  Sort Method: quicksort  Memory: 233kB
+  Buffers: shared hit=855
+  ->  Hash Join  (cost=967.97..1807.22 rows=2194 width=37) (actual time=3.100..5.920 rows=2250 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=849
+        ->  Hash Join  (cost=966.79..1797.23 rows=2194 width=35) (actual time=3.092..5.774 rows=2250 loops=1)
+              Hash Cond: (p.listing_id = pl.listing_id)
+              Buffers: shared hit=848
+              ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.002..1.642 rows=30000 loops=1)
+                    Filter: is_current
+                    Rows Removed by Filter: 6000
+                    Buffers: shared hit=336
+              ->  Hash  (cost=939.36..939.36 rows=2194 width=33) (actual time=3.082..3.083 rows=2250 loops=1)
+                    Buckets: 4096  Batches: 1  Memory Usage: 182kB
+                    Buffers: shared hit=512
+                    ->  Hash Join  (cost=8.49..939.36 rows=2194 width=33) (actual time=0.031..2.924 rows=2250 loops=1)
+                          Hash Cond: (pl.model_id = pm.model_id)
+                          Buffers: shared hit=512
+                          ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=16) (actual time=0.002..2.309 rows=18000 loops=1)
+                                Filter: ((status)::text = 'available'::text)
+                                Rows Removed by Filter: 12000
+                                Buffers: shared hit=508
+                          ->  Hash  (cost=8.00..8.00 rows=39 width=25) (actual time=0.024..0.024 rows=40 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 11kB
+                                Buffers: shared hit=4
+                                ->  Seq Scan on phone_models pm  (cost=0.00..8.00 rows=39 width=25) (actual time=0.002..0.021 rows=40 loops=1)
+                                      Filter: ((model_name)::text ~~ '%iPhone%'::text)
+                                      Rows Removed by Filter: 280
+                                      Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.006..0.006 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.002..0.003 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=472
+Planning Time: 1.277 ms
+Execution Time: 7.368 ms
+
+=== R9 run 3 ===
+Sort  (cost=1928.98..1934.46 rows=2194 width=37) (actual time=7.113..7.154 rows=2250 loops=1)
+  Sort Key: pm.release_year DESC, p.final_price
+  Sort Method: quicksort  Memory: 233kB
+  Buffers: shared hit=855
+  ->  Hash Join  (cost=967.97..1807.22 rows=2194 width=37) (actual time=3.000..5.841 rows=2250 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=849
+        ->  Hash Join  (cost=966.79..1797.23 rows=2194 width=35) (actual time=2.991..5.690 rows=2250 loops=1)
+              Hash Cond: (p.listing_id = pl.listing_id)
+              Buffers: shared hit=848
+              ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.002..1.673 rows=30000 loops=1)
+                    Filter: is_current
+                    Rows Removed by Filter: 6000
+                    Buffers: shared hit=336
+              ->  Hash  (cost=939.36..939.36 rows=2194 width=33) (actual time=2.983..2.983 rows=2250 loops=1)
+                    Buckets: 4096  Batches: 1  Memory Usage: 182kB
+                    Buffers: shared hit=512
+                    ->  Hash Join  (cost=8.49..939.36 rows=2194 width=33) (actual time=0.031..2.822 rows=2250 loops=1)
+                          Hash Cond: (pl.model_id = pm.model_id)
+                          Buffers: shared hit=512
+                          ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=16) (actual time=0.003..2.227 rows=18000 loops=1)
+                                Filter: ((status)::text = 'available'::text)
+                                Rows Removed by Filter: 12000
+                                Buffers: shared hit=508
+                          ->  Hash  (cost=8.00..8.00 rows=39 width=25) (actual time=0.023..0.024 rows=40 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 11kB
+                                Buffers: shared hit=4
+                                ->  Seq Scan on phone_models pm  (cost=0.00..8.00 rows=39 width=25) (actual time=0.002..0.021 rows=40 loops=1)
+                                      Filter: ((model_name)::text ~~ '%iPhone%'::text)
+                                      Rows Removed by Filter: 280
+                                      Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.006..0.006 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.002..0.003 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=472
+Planning Time: 1.254 ms
+Execution Time: 7.235 ms
+

@@ -1,0 +1,75 @@
+-- READ R21: Include users with no wishlist entries.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R21 run 1 ===
+Sort  (cost=1357.15..1382.15 rows=10000 width=40) (actual time=3.730..3.890 rows=10000 loops=1)
+  Sort Key: (count(w.wishlist_id)) DESC
+  Sort Method: quicksort  Memory: 1002kB
+  Buffers: shared hit=245
+  ->  HashAggregate  (cost=592.76..692.76 rows=10000 width=40) (actual time=2.730..3.174 rows=10000 loops=1)
+        Group Key: u.user_id
+        Batches: 1  Memory Usage: 1425kB
+        Buffers: shared hit=242
+        ->  Hash Right Join  (cost=428.00..542.76 rows=10000 width=36) (actual time=1.120..1.933 rows=10000 loops=1)
+              Hash Cond: (w.user_id = u.user_id)
+              Buffers: shared hit=242
+              ->  Seq Scan on wishlist w  (cost=0.00..99.00 rows=6000 width=8) (actual time=0.003..0.164 rows=6000 loops=1)
+                    Buffers: shared hit=39
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=1.106..1.106 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 771kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.004..0.649 rows=10000 loops=1)
+                          Buffers: shared hit=203
+Planning:
+  Buffers: shared hit=241
+Planning Time: 0.480 ms
+Execution Time: 4.104 ms
+
+=== R21 run 2 ===
+Sort  (cost=1357.15..1382.15 rows=10000 width=40) (actual time=3.714..3.877 rows=10000 loops=1)
+  Sort Key: (count(w.wishlist_id)) DESC
+  Sort Method: quicksort  Memory: 1002kB
+  Buffers: shared hit=245
+  ->  HashAggregate  (cost=592.76..692.76 rows=10000 width=40) (actual time=2.697..3.150 rows=10000 loops=1)
+        Group Key: u.user_id
+        Batches: 1  Memory Usage: 1425kB
+        Buffers: shared hit=242
+        ->  Hash Right Join  (cost=428.00..542.76 rows=10000 width=36) (actual time=1.068..1.861 rows=10000 loops=1)
+              Hash Cond: (w.user_id = u.user_id)
+              Buffers: shared hit=242
+              ->  Seq Scan on wishlist w  (cost=0.00..99.00 rows=6000 width=8) (actual time=0.002..0.166 rows=6000 loops=1)
+                    Buffers: shared hit=39
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=1.056..1.056 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 771kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.003..0.614 rows=10000 loops=1)
+                          Buffers: shared hit=203
+Planning:
+  Buffers: shared hit=241
+Planning Time: 0.425 ms
+Execution Time: 4.082 ms
+
+=== R21 run 3 ===
+Sort  (cost=1357.15..1382.15 rows=10000 width=40) (actual time=3.988..4.153 rows=10000 loops=1)
+  Sort Key: (count(w.wishlist_id)) DESC
+  Sort Method: quicksort  Memory: 1002kB
+  Buffers: shared hit=245
+  ->  HashAggregate  (cost=592.76..692.76 rows=10000 width=40) (actual time=2.889..3.377 rows=10000 loops=1)
+        Group Key: u.user_id
+        Batches: 1  Memory Usage: 1425kB
+        Buffers: shared hit=242
+        ->  Hash Right Join  (cost=428.00..542.76 rows=10000 width=36) (actual time=1.195..2.060 rows=10000 loops=1)
+              Hash Cond: (w.user_id = u.user_id)
+              Buffers: shared hit=242
+              ->  Seq Scan on wishlist w  (cost=0.00..99.00 rows=6000 width=8) (actual time=0.002..0.174 rows=6000 loops=1)
+                    Buffers: shared hit=39
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=32) (actual time=1.177..1.177 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 771kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=32) (actual time=0.003..0.660 rows=10000 loops=1)
+                          Buffers: shared hit=203
+Planning:
+  Buffers: shared hit=241
+Planning Time: 0.432 ms
+Execution Time: 4.358 ms
+

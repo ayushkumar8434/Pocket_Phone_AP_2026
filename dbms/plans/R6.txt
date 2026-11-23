@@ -1,0 +1,153 @@
+-- READ R6: Get the 50 most recent reviews with listing details.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R6 run 1 ===
+Limit  (cost=1.18..23.13 rows=50 width=55) (actual time=0.316..0.523 rows=50 loops=1)
+  Buffers: shared hit=250
+  ->  Nested Loop  (cost=1.18..8781.08 rows=20000 width=55) (actual time=0.316..0.520 rows=50 loops=1)
+        Buffers: shared hit=250
+        ->  Nested Loop  (cost=1.04..8308.61 rows=20000 width=53) (actual time=0.312..0.509 rows=50 loops=1)
+              Buffers: shared hit=242
+              ->  Nested Loop  (cost=0.88..7756.34 rows=20000 width=40) (actual time=0.307..0.483 rows=50 loops=1)
+                    Buffers: shared hit=202
+                    ->  Nested Loop  (cost=0.58..5139.08 rows=20000 width=40) (actual time=0.291..0.422 rows=50 loops=1)
+                          Buffers: shared hit=142
+                          ->  Index Scan Backward using idx_review_date on reviews r  (cost=0.29..1148.00 rows=20000 width=36) (actual time=0.006..0.060 rows=50 loops=1)
+                                Buffers: shared hit=52
+                          ->  Memoize  (cost=0.30..0.36 rows=1 width=12) (actual time=0.007..0.007 rows=1 loops=50)
+                                Cache Key: r.reviewer_id
+                                Cache Mode: logical
+                                Hits: 20  Misses: 30  Evictions: 0  Overflows: 0  Memory Usage: 4kB
+                                Buffers: shared hit=90
+                                ->  Index Scan using users_pkey on users u  (cost=0.29..0.35 rows=1 width=12) (actual time=0.002..0.002 rows=1 loops=30)
+                                      Index Cond: (user_id = r.reviewer_id)
+                                      Buffers: shared hit=90
+                    ->  Memoize  (cost=0.30..0.43 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=50)
+                          Cache Key: r.listing_id
+                          Cache Mode: logical
+                          Hits: 30  Misses: 20  Evictions: 0  Overflows: 0  Memory Usage: 3kB
+                          Buffers: shared hit=60
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..0.42 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=20)
+                                Index Cond: (listing_id = r.listing_id)
+                                Buffers: shared hit=60
+              ->  Memoize  (cost=0.16..0.18 rows=1 width=21) (actual time=0.000..0.000 rows=1 loops=50)
+                    Cache Key: pl.model_id
+                    Cache Mode: logical
+                    Hits: 30  Misses: 20  Evictions: 0  Overflows: 0  Memory Usage: 3kB
+                    Buffers: shared hit=40
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.001..0.001 rows=1 loops=20)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=40
+        ->  Memoize  (cost=0.14..0.20 rows=1 width=10) (actual time=0.000..0.000 rows=1 loops=50)
+              Cache Key: pm.brand_id
+              Cache Mode: logical
+              Hits: 46  Misses: 4  Evictions: 0  Overflows: 0  Memory Usage: 1kB
+              Buffers: shared hit=8
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.001..0.001 rows=1 loops=4)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=8
+Planning:
+  Buffers: shared hit=602
+Planning Time: 1.264 ms
+Execution Time: 0.568 ms
+
+=== R6 run 2 ===
+Limit  (cost=1.18..23.13 rows=50 width=55) (actual time=0.069..0.308 rows=50 loops=1)
+  Buffers: shared hit=250
+  ->  Nested Loop  (cost=1.18..8781.08 rows=20000 width=55) (actual time=0.068..0.306 rows=50 loops=1)
+        Buffers: shared hit=250
+        ->  Nested Loop  (cost=1.04..8308.61 rows=20000 width=53) (actual time=0.064..0.293 rows=50 loops=1)
+              Buffers: shared hit=242
+              ->  Nested Loop  (cost=0.88..7756.34 rows=20000 width=40) (actual time=0.058..0.262 rows=50 loops=1)
+                    Buffers: shared hit=202
+                    ->  Nested Loop  (cost=0.58..5139.08 rows=20000 width=40) (actual time=0.033..0.186 rows=50 loops=1)
+                          Buffers: shared hit=142
+                          ->  Index Scan Backward using idx_review_date on reviews r  (cost=0.29..1148.00 rows=20000 width=36) (actual time=0.007..0.070 rows=50 loops=1)
+                                Buffers: shared hit=52
+                          ->  Memoize  (cost=0.30..0.36 rows=1 width=12) (actual time=0.002..0.002 rows=1 loops=50)
+                                Cache Key: r.reviewer_id
+                                Cache Mode: logical
+                                Hits: 20  Misses: 30  Evictions: 0  Overflows: 0  Memory Usage: 4kB
+                                Buffers: shared hit=90
+                                ->  Index Scan using users_pkey on users u  (cost=0.29..0.35 rows=1 width=12) (actual time=0.003..0.003 rows=1 loops=30)
+                                      Index Cond: (user_id = r.reviewer_id)
+                                      Buffers: shared hit=90
+                    ->  Memoize  (cost=0.30..0.43 rows=1 width=8) (actual time=0.001..0.001 rows=1 loops=50)
+                          Cache Key: r.listing_id
+                          Cache Mode: logical
+                          Hits: 30  Misses: 20  Evictions: 0  Overflows: 0  Memory Usage: 3kB
+                          Buffers: shared hit=60
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..0.42 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=20)
+                                Index Cond: (listing_id = r.listing_id)
+                                Buffers: shared hit=60
+              ->  Memoize  (cost=0.16..0.18 rows=1 width=21) (actual time=0.001..0.001 rows=1 loops=50)
+                    Cache Key: pl.model_id
+                    Cache Mode: logical
+                    Hits: 30  Misses: 20  Evictions: 0  Overflows: 0  Memory Usage: 3kB
+                    Buffers: shared hit=40
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.001..0.001 rows=1 loops=20)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=40
+        ->  Memoize  (cost=0.14..0.20 rows=1 width=10) (actual time=0.000..0.000 rows=1 loops=50)
+              Cache Key: pm.brand_id
+              Cache Mode: logical
+              Hits: 46  Misses: 4  Evictions: 0  Overflows: 0  Memory Usage: 1kB
+              Buffers: shared hit=8
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.001..0.001 rows=1 loops=4)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=8
+Planning:
+  Buffers: shared hit=602
+Planning Time: 1.320 ms
+Execution Time: 0.357 ms
+
+=== R6 run 3 ===
+Limit  (cost=1.18..23.13 rows=50 width=55) (actual time=0.068..0.321 rows=50 loops=1)
+  Buffers: shared hit=250
+  ->  Nested Loop  (cost=1.18..8781.08 rows=20000 width=55) (actual time=0.068..0.319 rows=50 loops=1)
+        Buffers: shared hit=250
+        ->  Nested Loop  (cost=1.04..8308.61 rows=20000 width=53) (actual time=0.064..0.305 rows=50 loops=1)
+              Buffers: shared hit=242
+              ->  Nested Loop  (cost=0.88..7756.34 rows=20000 width=40) (actual time=0.058..0.274 rows=50 loops=1)
+                    Buffers: shared hit=202
+                    ->  Nested Loop  (cost=0.58..5139.08 rows=20000 width=40) (actual time=0.042..0.192 rows=50 loops=1)
+                          Buffers: shared hit=142
+                          ->  Index Scan Backward using idx_review_date on reviews r  (cost=0.29..1148.00 rows=20000 width=36) (actual time=0.006..0.067 rows=50 loops=1)
+                                Buffers: shared hit=52
+                          ->  Memoize  (cost=0.30..0.36 rows=1 width=12) (actual time=0.002..0.002 rows=1 loops=50)
+                                Cache Key: r.reviewer_id
+                                Cache Mode: logical
+                                Hits: 20  Misses: 30  Evictions: 0  Overflows: 0  Memory Usage: 4kB
+                                Buffers: shared hit=90
+                                ->  Index Scan using users_pkey on users u  (cost=0.29..0.35 rows=1 width=12) (actual time=0.003..0.003 rows=1 loops=30)
+                                      Index Cond: (user_id = r.reviewer_id)
+                                      Buffers: shared hit=90
+                    ->  Memoize  (cost=0.30..0.43 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=50)
+                          Cache Key: r.listing_id
+                          Cache Mode: logical
+                          Hits: 30  Misses: 20  Evictions: 0  Overflows: 0  Memory Usage: 3kB
+                          Buffers: shared hit=60
+                          ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..0.42 rows=1 width=8) (actual time=0.003..0.003 rows=1 loops=20)
+                                Index Cond: (listing_id = r.listing_id)
+                                Buffers: shared hit=60
+              ->  Memoize  (cost=0.16..0.18 rows=1 width=21) (actual time=0.000..0.001 rows=1 loops=50)
+                    Cache Key: pl.model_id
+                    Cache Mode: logical
+                    Hits: 30  Misses: 20  Evictions: 0  Overflows: 0  Memory Usage: 3kB
+                    Buffers: shared hit=40
+                    ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.001..0.001 rows=1 loops=20)
+                          Index Cond: (model_id = pl.model_id)
+                          Buffers: shared hit=40
+        ->  Memoize  (cost=0.14..0.20 rows=1 width=10) (actual time=0.000..0.000 rows=1 loops=50)
+              Cache Key: pm.brand_id
+              Cache Mode: logical
+              Hits: 46  Misses: 4  Evictions: 0  Overflows: 0  Memory Usage: 1kB
+              Buffers: shared hit=8
+              ->  Index Scan using brands_pkey on brands b  (cost=0.13..0.19 rows=1 width=10) (actual time=0.001..0.001 rows=1 loops=4)
+                    Index Cond: (brand_id = pm.brand_id)
+                    Buffers: shared hit=8
+Planning:
+  Buffers: shared hit=602
+Planning Time: 1.267 ms
+Execution Time: 0.371 ms
+

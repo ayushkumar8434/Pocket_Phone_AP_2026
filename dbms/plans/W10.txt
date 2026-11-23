@@ -1,0 +1,40 @@
+-- WRITE W10: Delete old non-current price history for one listing.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+-- Run inside BEGIN ... ROLLBACK, so the data does not change.
+
+=== W10 run 1 ===
+Delete on pricing  (cost=0.29..8.32 rows=0 width=0) (actual time=0.081..0.081 rows=0 loops=1)
+  Buffers: shared hit=5
+  ->  Index Scan using idx_listing_current on pricing  (cost=0.29..8.32 rows=1 width=6) (actual time=0.020..0.021 rows=1 loops=1)
+        Index Cond: ((listing_id = 5) AND (is_current = false))
+        Filter: (price_updated_date < (CURRENT_DATE - '6 mons'::interval))
+        Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=110
+Planning Time: 0.509 ms
+Execution Time: 0.170 ms
+
+=== W10 run 2 ===
+Delete on pricing  (cost=0.29..8.32 rows=0 width=0) (actual time=0.055..0.055 rows=0 loops=1)
+  Buffers: shared hit=4
+  ->  Index Scan using idx_listing_current on pricing  (cost=0.29..8.32 rows=1 width=6) (actual time=0.032..0.033 rows=1 loops=1)
+        Index Cond: ((listing_id = 5) AND (is_current = false))
+        Filter: (price_updated_date < (CURRENT_DATE - '6 mons'::interval))
+        Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=110
+Planning Time: 0.864 ms
+Execution Time: 0.178 ms
+
+=== W10 run 3 ===
+Delete on pricing  (cost=0.29..8.32 rows=0 width=0) (actual time=0.070..0.071 rows=0 loops=1)
+  Buffers: shared hit=4
+  ->  Index Scan using idx_listing_current on pricing  (cost=0.29..8.32 rows=1 width=6) (actual time=0.036..0.037 rows=1 loops=1)
+        Index Cond: ((listing_id = 5) AND (is_current = false))
+        Filter: (price_updated_date < (CURRENT_DATE - '6 mons'::interval))
+        Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=110
+Planning Time: 0.907 ms
+Execution Time: 0.201 ms
+

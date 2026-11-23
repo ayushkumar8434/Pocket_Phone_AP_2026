@@ -1,9 +1,0 @@
--- Query 21: Include users with no wishlist entries.
--- EXPLAIN ANALYZE on MySQL, sample data (see 05_query_timings.md)
-
--> Sort: wishlist_count DESC  (actual time=27..27.6 rows=20000 loops=1)
-    -> Table scan on <temporary>  (actual time=24..25 rows=20000 loops=1)
-        -> Aggregate using temporary table  (actual time=24..24 rows=20000 loops=1)
-            -> Nested loop left join  (cost=9062 rows=20192) (actual time=0.0264..13 rows=20000 loops=1)
-                -> Table scan on u  (cost=2064 rows=19916) (actual time=0.0219..2.61 rows=20000 loops=1)
-                -> Covering index lookup on w using idx_user_wishlist (user_id = u.user_id)  (cost=0.25 rows=1.01) (actual time=387e-6..448e-6 rows=0.6 loops=20000)

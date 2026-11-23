@@ -1,0 +1,51 @@
+-- READ R18: Monthly transaction volume and payment outcomes.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R18 run 1 ===
+Sort  (cost=594.83..600.23 rows=2160 width=152) (actual time=4.428..4.429 rows=14 loops=1)
+  Sort Key: (to_char(transaction_date, 'YYYY'::text)) DESC, (to_char(transaction_date, 'MM'::text)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=120
+  ->  HashAggregate  (cost=432.00..475.20 rows=2160 width=152) (actual time=4.398..4.409 rows=14 loops=1)
+        Group Key: to_char(transaction_date, 'YYYY'::text), to_char(transaction_date, 'MM'::text)
+        Batches: 1  Memory Usage: 121kB
+        Buffers: shared hit=117
+        ->  Seq Scan on transactions  (cost=0.00..252.00 rows=9000 width=79) (actual time=1.780..3.374 rows=9000 loops=1)
+              Buffers: shared hit=117
+Planning:
+  Buffers: shared hit=190
+Planning Time: 0.301 ms
+Execution Time: 4.460 ms
+
+=== R18 run 2 ===
+Sort  (cost=594.83..600.23 rows=2160 width=152) (actual time=4.545..4.546 rows=14 loops=1)
+  Sort Key: (to_char(transaction_date, 'YYYY'::text)) DESC, (to_char(transaction_date, 'MM'::text)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=120
+  ->  HashAggregate  (cost=432.00..475.20 rows=2160 width=152) (actual time=4.515..4.526 rows=14 loops=1)
+        Group Key: to_char(transaction_date, 'YYYY'::text), to_char(transaction_date, 'MM'::text)
+        Batches: 1  Memory Usage: 121kB
+        Buffers: shared hit=117
+        ->  Seq Scan on transactions  (cost=0.00..252.00 rows=9000 width=79) (actual time=1.677..3.417 rows=9000 loops=1)
+              Buffers: shared hit=117
+Planning:
+  Buffers: shared hit=190
+Planning Time: 0.285 ms
+Execution Time: 4.579 ms
+
+=== R18 run 3 ===
+Sort  (cost=594.83..600.23 rows=2160 width=152) (actual time=4.193..4.194 rows=14 loops=1)
+  Sort Key: (to_char(transaction_date, 'YYYY'::text)) DESC, (to_char(transaction_date, 'MM'::text)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=120
+  ->  HashAggregate  (cost=432.00..475.20 rows=2160 width=152) (actual time=4.163..4.174 rows=14 loops=1)
+        Group Key: to_char(transaction_date, 'YYYY'::text), to_char(transaction_date, 'MM'::text)
+        Batches: 1  Memory Usage: 121kB
+        Buffers: shared hit=117
+        ->  Seq Scan on transactions  (cost=0.00..252.00 rows=9000 width=79) (actual time=1.312..3.021 rows=9000 loops=1)
+              Buffers: shared hit=117
+Planning:
+  Buffers: shared hit=190
+Planning Time: 0.276 ms
+Execution Time: 4.221 ms
+

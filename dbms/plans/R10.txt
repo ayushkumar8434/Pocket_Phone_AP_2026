@@ -1,0 +1,138 @@
+-- READ R10: Find verified available listings.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R10 run 1 ===
+Sort  (cost=2024.51..2039.51 rows=6000 width=42) (actual time=6.288..6.409 rows=6000 loops=1)
+  Sort Key: pl.verification_date DESC
+  Sort Method: quicksort  Memory: 570kB
+  Buffers: shared hit=861
+  ->  Hash Join  (cost=833.17..1647.99 rows=6000 width=42) (actual time=1.923..5.695 rows=6000 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=858
+        ->  Hash Join  (cost=831.99..1622.71 rows=6000 width=40) (actual time=1.915..5.323 rows=6000 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=857
+              ->  Hash Join  (cost=820.79..1595.55 rows=6000 width=27) (actual time=1.879..4.877 rows=6000 loops=1)
+                    Hash Cond: (p.listing_id = pl.listing_id)
+                    Buffers: shared hit=853
+                    ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.002..1.571 rows=30000 loops=1)
+                          Filter: is_current
+                          Rows Removed by Filter: 6000
+                          Buffers: shared hit=336
+                    ->  Hash  (cost=745.79..745.79 rows=6000 width=21) (actual time=1.870..1.870 rows=6000 loops=1)
+                          Buckets: 8192  Batches: 1  Memory Usage: 400kB
+                          Buffers: shared hit=517
+                          ->  Bitmap Heap Scan on phone_listings pl  (cost=112.79..745.79 rows=6000 width=21) (actual time=0.147..1.537 rows=6000 loops=1)
+                                Recheck Cond: is_verified
+                                Filter: ((status)::text = 'available'::text)
+                                Rows Removed by Filter: 4000
+                                Heap Blocks: exact=508
+                                Buffers: shared hit=517
+                                ->  Bitmap Index Scan on idx_verified  (cost=0.00..111.29 rows=10000 width=0) (actual time=0.117..0.117 rows=10000 loops=1)
+                                      Index Cond: (is_verified = true)
+                                      Buffers: shared hit=9
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.033..0.033 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.003..0.017 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.006..0.006 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.003 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=523
+Planning Time: 0.873 ms
+Execution Time: 6.551 ms
+
+=== R10 run 2 ===
+Sort  (cost=2024.51..2039.51 rows=6000 width=42) (actual time=6.131..6.237 rows=6000 loops=1)
+  Sort Key: pl.verification_date DESC
+  Sort Method: quicksort  Memory: 570kB
+  Buffers: shared hit=861
+  ->  Hash Join  (cost=833.17..1647.99 rows=6000 width=42) (actual time=1.850..5.530 rows=6000 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=858
+        ->  Hash Join  (cost=831.99..1622.71 rows=6000 width=40) (actual time=1.842..5.159 rows=6000 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=857
+              ->  Hash Join  (cost=820.79..1595.55 rows=6000 width=27) (actual time=1.807..4.721 rows=6000 loops=1)
+                    Hash Cond: (p.listing_id = pl.listing_id)
+                    Buffers: shared hit=853
+                    ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.002..1.554 rows=30000 loops=1)
+                          Filter: is_current
+                          Rows Removed by Filter: 6000
+                          Buffers: shared hit=336
+                    ->  Hash  (cost=745.79..745.79 rows=6000 width=21) (actual time=1.799..1.799 rows=6000 loops=1)
+                          Buckets: 8192  Batches: 1  Memory Usage: 400kB
+                          Buffers: shared hit=517
+                          ->  Bitmap Heap Scan on phone_listings pl  (cost=112.79..745.79 rows=6000 width=21) (actual time=0.139..1.470 rows=6000 loops=1)
+                                Recheck Cond: is_verified
+                                Filter: ((status)::text = 'available'::text)
+                                Rows Removed by Filter: 4000
+                                Heap Blocks: exact=508
+                                Buffers: shared hit=517
+                                ->  Bitmap Index Scan on idx_verified  (cost=0.00..111.29 rows=10000 width=0) (actual time=0.109..0.109 rows=10000 loops=1)
+                                      Index Cond: (is_verified = true)
+                                      Buffers: shared hit=9
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.032..0.032 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.002..0.016 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.006..0.006 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.003 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=523
+Planning Time: 0.847 ms
+Execution Time: 6.369 ms
+
+=== R10 run 3 ===
+Sort  (cost=2024.51..2039.51 rows=6000 width=42) (actual time=6.489..6.611 rows=6000 loops=1)
+  Sort Key: pl.verification_date DESC
+  Sort Method: quicksort  Memory: 570kB
+  Buffers: shared hit=861
+  ->  Hash Join  (cost=833.17..1647.99 rows=6000 width=42) (actual time=2.022..5.882 rows=6000 loops=1)
+        Hash Cond: (pm.brand_id = b.brand_id)
+        Buffers: shared hit=858
+        ->  Hash Join  (cost=831.99..1622.71 rows=6000 width=40) (actual time=2.012..5.504 rows=6000 loops=1)
+              Hash Cond: (pl.model_id = pm.model_id)
+              Buffers: shared hit=857
+              ->  Hash Join  (cost=820.79..1595.55 rows=6000 width=27) (actual time=1.975..5.051 rows=6000 loops=1)
+                    Hash Cond: (p.listing_id = pl.listing_id)
+                    Buffers: shared hit=853
+                    ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.003..1.677 rows=30000 loops=1)
+                          Filter: is_current
+                          Rows Removed by Filter: 6000
+                          Buffers: shared hit=336
+                    ->  Hash  (cost=745.79..745.79 rows=6000 width=21) (actual time=1.965..1.965 rows=6000 loops=1)
+                          Buckets: 8192  Batches: 1  Memory Usage: 400kB
+                          Buffers: shared hit=517
+                          ->  Bitmap Heap Scan on phone_listings pl  (cost=112.79..745.79 rows=6000 width=21) (actual time=0.145..1.594 rows=6000 loops=1)
+                                Recheck Cond: is_verified
+                                Filter: ((status)::text = 'available'::text)
+                                Rows Removed by Filter: 4000
+                                Heap Blocks: exact=508
+                                Buffers: shared hit=517
+                                ->  Bitmap Index Scan on idx_verified  (cost=0.00..111.29 rows=10000 width=0) (actual time=0.115..0.116 rows=10000 loops=1)
+                                      Index Cond: (is_verified = true)
+                                      Buffers: shared hit=9
+              ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.034..0.034 rows=320 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                    Buffers: shared hit=4
+                    ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.002..0.018 rows=320 loops=1)
+                          Buffers: shared hit=4
+        ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.007..0.007 rows=8 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.004 rows=8 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=523
+Planning Time: 0.939 ms
+Execution Time: 6.757 ms
+

@@ -1,0 +1,177 @@
+-- READ R26: Find the most expensive available listing for every brand.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R26 run 1 ===
+Sort  (cost=14515.32..14515.32 rows=1 width=29) (actual time=37.274..37.276 rows=8 loops=1)
+  Sort Key: p.final_price DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6856
+  ->  Nested Loop  (cost=1804.99..14515.31 rows=1 width=29) (actual time=5.925..37.263 rows=8 loops=1)
+        Join Filter: (b.brand_id = pm.brand_id)
+        Buffers: shared hit=6853
+        ->  Nested Loop  (cost=1804.85..14514.59 rows=4 width=24) (actual time=5.922..37.252 rows=8 loops=1)
+              Buffers: shared hit=6837
+              ->  Nested Loop  (cost=1804.56..14511.89 rows=7 width=20) (actual time=5.915..37.223 rows=8 loops=1)
+                    Buffers: shared hit=6813
+                    ->  Index Scan using brands_pkey on brands b  (cost=0.13..12.25 rows=8 width=10) (actual time=0.002..0.003 rows=8 loops=1)
+                          Buffers: shared hit=2
+                    ->  Index Scan using idx_final_price on pricing p  (cost=1804.43..1812.44 rows=1 width=10) (actual time=0.003..0.003 rows=1 loops=8)
+                          Index Cond: (final_price = (SubPlan 1))
+                          Filter: is_current
+                          Rows Removed by Filter: 0
+                          Buffers: shared hit=27
+                          SubPlan 1
+                            ->  Aggregate  (cost=1804.13..1804.14 rows=1 width=32) (actual time=4.648..4.648 rows=1 loops=8)
+                                  Buffers: shared hit=6784
+                                  ->  Hash Join  (cost=967.50..1798.50 rows=2250 width=6) (actual time=2.367..4.577 rows=2250 loops=8)
+                                        Hash Cond: (p2.listing_id = pl2.listing_id)
+                                        Buffers: shared hit=6784
+                                        ->  Seq Scan on pricing p2  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.001..1.287 rows=30000 loops=8)
+                                              Filter: is_current
+                                              Rows Removed by Filter: 6000
+                                              Buffers: shared hit=2688
+                                        ->  Hash  (cost=939.37..939.37 rows=2250 width=4) (actual time=2.363..2.363 rows=2250 loops=8)
+                                              Buckets: 4096  Batches: 1  Memory Usage: 112kB
+                                              Buffers: shared hit=4096
+                                              ->  Hash Join  (cost=8.50..939.37 rows=2250 width=4) (actual time=0.014..2.286 rows=2250 loops=8)
+                                                    Hash Cond: (pl2.model_id = pm2.model_id)
+                                                    Buffers: shared hit=4096
+                                                    ->  Seq Scan on phone_listings pl2  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.001..1.767 rows=18000 loops=8)
+                                                          Filter: ((status)::text = 'available'::text)
+                                                          Rows Removed by Filter: 12000
+                                                          Buffers: shared hit=4064
+                                                    ->  Hash  (cost=8.00..8.00 rows=40 width=4) (actual time=0.012..0.012 rows=40 loops=8)
+                                                          Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                          Buffers: shared hit=32
+                                                          ->  Seq Scan on phone_models pm2  (cost=0.00..8.00 rows=40 width=4) (actual time=0.001..0.009 rows=40 loops=8)
+                                                                Filter: (brand_id = b.brand_id)
+                                                                Rows Removed by Filter: 280
+                                                                Buffers: shared hit=32
+              ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..0.39 rows=1 width=8) (actual time=0.003..0.003 rows=1 loops=8)
+                    Index Cond: (listing_id = p.listing_id)
+                    Filter: ((status)::text = 'available'::text)
+                    Buffers: shared hit=24
+        ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.001..0.001 rows=1 loops=8)
+              Index Cond: (model_id = pl.model_id)
+              Buffers: shared hit=16
+Planning:
+  Buffers: shared hit=544
+Planning Time: 1.110 ms
+Execution Time: 37.318 ms
+
+=== R26 run 2 ===
+Sort  (cost=14515.32..14515.32 rows=1 width=29) (actual time=37.102..37.104 rows=8 loops=1)
+  Sort Key: p.final_price DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6856
+  ->  Nested Loop  (cost=1804.99..14515.31 rows=1 width=29) (actual time=5.381..37.092 rows=8 loops=1)
+        Join Filter: (b.brand_id = pm.brand_id)
+        Buffers: shared hit=6853
+        ->  Nested Loop  (cost=1804.85..14514.59 rows=4 width=24) (actual time=5.378..37.082 rows=8 loops=1)
+              Buffers: shared hit=6837
+              ->  Nested Loop  (cost=1804.56..14511.89 rows=7 width=20) (actual time=5.370..37.055 rows=8 loops=1)
+                    Buffers: shared hit=6813
+                    ->  Index Scan using brands_pkey on brands b  (cost=0.13..12.25 rows=8 width=10) (actual time=0.002..0.003 rows=8 loops=1)
+                          Buffers: shared hit=2
+                    ->  Index Scan using idx_final_price on pricing p  (cost=1804.43..1812.44 rows=1 width=10) (actual time=0.003..0.003 rows=1 loops=8)
+                          Index Cond: (final_price = (SubPlan 1))
+                          Filter: is_current
+                          Rows Removed by Filter: 0
+                          Buffers: shared hit=27
+                          SubPlan 1
+                            ->  Aggregate  (cost=1804.13..1804.14 rows=1 width=32) (actual time=4.627..4.627 rows=1 loops=8)
+                                  Buffers: shared hit=6784
+                                  ->  Hash Join  (cost=967.50..1798.50 rows=2250 width=6) (actual time=2.350..4.557 rows=2250 loops=8)
+                                        Hash Cond: (p2.listing_id = pl2.listing_id)
+                                        Buffers: shared hit=6784
+                                        ->  Seq Scan on pricing p2  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.001..1.286 rows=30000 loops=8)
+                                              Filter: is_current
+                                              Rows Removed by Filter: 6000
+                                              Buffers: shared hit=2688
+                                        ->  Hash  (cost=939.37..939.37 rows=2250 width=4) (actual time=2.347..2.347 rows=2250 loops=8)
+                                              Buckets: 4096  Batches: 1  Memory Usage: 112kB
+                                              Buffers: shared hit=4096
+                                              ->  Hash Join  (cost=8.50..939.37 rows=2250 width=4) (actual time=0.014..2.266 rows=2250 loops=8)
+                                                    Hash Cond: (pl2.model_id = pm2.model_id)
+                                                    Buffers: shared hit=4096
+                                                    ->  Seq Scan on phone_listings pl2  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.001..1.750 rows=18000 loops=8)
+                                                          Filter: ((status)::text = 'available'::text)
+                                                          Rows Removed by Filter: 12000
+                                                          Buffers: shared hit=4064
+                                                    ->  Hash  (cost=8.00..8.00 rows=40 width=4) (actual time=0.011..0.011 rows=40 loops=8)
+                                                          Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                          Buffers: shared hit=32
+                                                          ->  Seq Scan on phone_models pm2  (cost=0.00..8.00 rows=40 width=4) (actual time=0.001..0.009 rows=40 loops=8)
+                                                                Filter: (brand_id = b.brand_id)
+                                                                Rows Removed by Filter: 280
+                                                                Buffers: shared hit=32
+              ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..0.39 rows=1 width=8) (actual time=0.003..0.003 rows=1 loops=8)
+                    Index Cond: (listing_id = p.listing_id)
+                    Filter: ((status)::text = 'available'::text)
+                    Buffers: shared hit=24
+        ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.001..0.001 rows=1 loops=8)
+              Index Cond: (model_id = pl.model_id)
+              Buffers: shared hit=16
+Planning:
+  Buffers: shared hit=544
+Planning Time: 0.961 ms
+Execution Time: 37.144 ms
+
+=== R26 run 3 ===
+Sort  (cost=14515.32..14515.32 rows=1 width=29) (actual time=36.928..36.930 rows=8 loops=1)
+  Sort Key: p.final_price DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6856
+  ->  Nested Loop  (cost=1804.99..14515.31 rows=1 width=29) (actual time=5.730..36.918 rows=8 loops=1)
+        Join Filter: (b.brand_id = pm.brand_id)
+        Buffers: shared hit=6853
+        ->  Nested Loop  (cost=1804.85..14514.59 rows=4 width=24) (actual time=5.727..36.907 rows=8 loops=1)
+              Buffers: shared hit=6837
+              ->  Nested Loop  (cost=1804.56..14511.89 rows=7 width=20) (actual time=5.721..36.883 rows=8 loops=1)
+                    Buffers: shared hit=6813
+                    ->  Index Scan using brands_pkey on brands b  (cost=0.13..12.25 rows=8 width=10) (actual time=0.002..0.003 rows=8 loops=1)
+                          Buffers: shared hit=2
+                    ->  Index Scan using idx_final_price on pricing p  (cost=1804.43..1812.44 rows=1 width=10) (actual time=0.002..0.003 rows=1 loops=8)
+                          Index Cond: (final_price = (SubPlan 1))
+                          Filter: is_current
+                          Rows Removed by Filter: 0
+                          Buffers: shared hit=27
+                          SubPlan 1
+                            ->  Aggregate  (cost=1804.13..1804.14 rows=1 width=32) (actual time=4.606..4.606 rows=1 loops=8)
+                                  Buffers: shared hit=6784
+                                  ->  Hash Join  (cost=967.50..1798.50 rows=2250 width=6) (actual time=2.350..4.535 rows=2250 loops=8)
+                                        Hash Cond: (p2.listing_id = pl2.listing_id)
+                                        Buffers: shared hit=6784
+                                        ->  Seq Scan on pricing p2  (cost=0.00..696.00 rows=30001 width=10) (actual time=0.001..1.278 rows=30000 loops=8)
+                                              Filter: is_current
+                                              Rows Removed by Filter: 6000
+                                              Buffers: shared hit=2688
+                                        ->  Hash  (cost=939.37..939.37 rows=2250 width=4) (actual time=2.347..2.347 rows=2250 loops=8)
+                                              Buckets: 4096  Batches: 1  Memory Usage: 112kB
+                                              Buffers: shared hit=4096
+                                              ->  Hash Join  (cost=8.50..939.37 rows=2250 width=4) (actual time=0.013..2.268 rows=2250 loops=8)
+                                                    Hash Cond: (pl2.model_id = pm2.model_id)
+                                                    Buffers: shared hit=4096
+                                                    ->  Seq Scan on phone_listings pl2  (cost=0.00..883.00 rows=18000 width=8) (actual time=0.001..1.754 rows=18000 loops=8)
+                                                          Filter: ((status)::text = 'available'::text)
+                                                          Rows Removed by Filter: 12000
+                                                          Buffers: shared hit=4064
+                                                    ->  Hash  (cost=8.00..8.00 rows=40 width=4) (actual time=0.011..0.011 rows=40 loops=8)
+                                                          Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                          Buffers: shared hit=32
+                                                          ->  Seq Scan on phone_models pm2  (cost=0.00..8.00 rows=40 width=4) (actual time=0.001..0.009 rows=40 loops=8)
+                                                                Filter: (brand_id = b.brand_id)
+                                                                Rows Removed by Filter: 280
+                                                                Buffers: shared hit=32
+              ->  Index Scan using phone_listings_pkey on phone_listings pl  (cost=0.29..0.39 rows=1 width=8) (actual time=0.002..0.002 rows=1 loops=8)
+                    Index Cond: (listing_id = p.listing_id)
+                    Filter: ((status)::text = 'available'::text)
+                    Buffers: shared hit=24
+        ->  Index Scan using phone_models_pkey on phone_models pm  (cost=0.15..0.17 rows=1 width=21) (actual time=0.001..0.001 rows=1 loops=8)
+              Index Cond: (model_id = pl.model_id)
+              Buffers: shared hit=16
+Planning:
+  Buffers: shared hit=544
+Planning Time: 0.986 ms
+Execution Time: 36.966 ms
+

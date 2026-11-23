@@ -1,0 +1,171 @@
+-- READ R4: List available listings with current price and seller location.
+-- EXPLAIN (ANALYZE, BUFFERS), PostgreSQL, data from dbms/06_sample_data.sql
+
+=== R4 run 1 ===
+Sort  (cost=3818.47..3863.47 rows=18001 width=84) (actual time=25.698..26.213 rows=18000 loops=1)
+  Sort Key: pl.listing_date DESC
+  Sort Method: quicksort  Memory: 2673kB
+  Buffers: shared hit=1056
+  ->  Hash Join  (cost=1550.05..2546.18 rows=18001 width=84) (actual time=8.045..20.916 rows=18000 loops=1)
+        Hash Cond: (u.city_id = c.city_id)
+        Buffers: shared hit=1053
+        ->  Hash Join  (cost=1548.38..2490.58 rows=18001 width=81) (actual time=8.016..19.184 rows=18000 loops=1)
+              Hash Cond: (pl.seller_id = u.user_id)
+              Buffers: shared hit=1052
+              ->  Hash Join  (cost=1120.38..2015.30 rows=18001 width=73) (actual time=6.612..15.705 rows=18000 loops=1)
+                    Hash Cond: (pm.brand_id = b.brand_id)
+                    Buffers: shared hit=849
+                    ->  Hash Join  (cost=1119.20..1941.84 rows=18001 width=71) (actual time=6.596..13.998 rows=18000 loops=1)
+                          Hash Cond: (pl.model_id = pm.model_id)
+                          Buffers: shared hit=848
+                          ->  Hash Join  (cost=1108.00..1882.76 rows=18001 width=58) (actual time=6.506..12.033 rows=18000 loops=1)
+                                Hash Cond: (p.listing_id = pl.listing_id)
+                                Buffers: shared hit=844
+                                ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=14) (actual time=0.005..2.132 rows=30000 loops=1)
+                                      Filter: is_current
+                                      Rows Removed by Filter: 6000
+                                      Buffers: shared hit=336
+                                ->  Hash  (cost=883.00..883.00 rows=18000 width=48) (actual time=6.466..6.467 rows=18000 loops=1)
+                                      Buckets: 32768  Batches: 1  Memory Usage: 1741kB
+                                      Buffers: shared hit=508
+                                      ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=48) (actual time=0.005..3.937 rows=18000 loops=1)
+                                            Filter: ((status)::text = 'available'::text)
+                                            Rows Removed by Filter: 12000
+                                            Buffers: shared hit=508
+                          ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.083..0.083 rows=320 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                                Buffers: shared hit=4
+                                ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.005..0.040 rows=320 loops=1)
+                                      Buffers: shared hit=4
+                    ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.009..0.009 rows=8 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.005..0.006 rows=8 loops=1)
+                                Buffers: shared hit=1
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=16) (actual time=1.383..1.383 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 632kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=16) (actual time=0.006..0.831 rows=10000 loops=1)
+                          Buffers: shared hit=203
+        ->  Hash  (cost=1.30..1.30 rows=30 width=11) (actual time=0.022..0.022 rows=30 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 10kB
+              Buffers: shared hit=1
+              ->  Seq Scan on cities c  (cost=0.00..1.30 rows=30 width=11) (actual time=0.009..0.013 rows=30 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=678
+Planning Time: 3.597 ms
+Execution Time: 27.486 ms
+
+=== R4 run 2 ===
+Sort  (cost=3818.47..3863.47 rows=18001 width=84) (actual time=22.432..22.800 rows=18000 loops=1)
+  Sort Key: pl.listing_date DESC
+  Sort Method: quicksort  Memory: 2673kB
+  Buffers: shared hit=1056
+  ->  Hash Join  (cost=1550.05..2546.18 rows=18001 width=84) (actual time=6.744..18.141 rows=18000 loops=1)
+        Hash Cond: (u.city_id = c.city_id)
+        Buffers: shared hit=1053
+        ->  Hash Join  (cost=1548.38..2490.58 rows=18001 width=81) (actual time=6.732..16.645 rows=18000 loops=1)
+              Hash Cond: (pl.seller_id = u.user_id)
+              Buffers: shared hit=1052
+              ->  Hash Join  (cost=1120.38..2015.30 rows=18001 width=73) (actual time=5.570..13.661 rows=18000 loops=1)
+                    Hash Cond: (pm.brand_id = b.brand_id)
+                    Buffers: shared hit=849
+                    ->  Hash Join  (cost=1119.20..1941.84 rows=18001 width=71) (actual time=5.564..12.165 rows=18000 loops=1)
+                          Hash Cond: (pl.model_id = pm.model_id)
+                          Buffers: shared hit=848
+                          ->  Hash Join  (cost=1108.00..1882.76 rows=18001 width=58) (actual time=5.528..10.472 rows=18000 loops=1)
+                                Hash Cond: (p.listing_id = pl.listing_id)
+                                Buffers: shared hit=844
+                                ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=14) (actual time=0.003..1.945 rows=30000 loops=1)
+                                      Filter: is_current
+                                      Rows Removed by Filter: 6000
+                                      Buffers: shared hit=336
+                                ->  Hash  (cost=883.00..883.00 rows=18000 width=48) (actual time=5.510..5.510 rows=18000 loops=1)
+                                      Buckets: 32768  Batches: 1  Memory Usage: 1741kB
+                                      Buffers: shared hit=508
+                                      ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=48) (actual time=0.002..3.398 rows=18000 loops=1)
+                                            Filter: ((status)::text = 'available'::text)
+                                            Rows Removed by Filter: 12000
+                                            Buffers: shared hit=508
+                          ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.033..0.033 rows=320 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                                Buffers: shared hit=4
+                                ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.002..0.017 rows=320 loops=1)
+                                      Buffers: shared hit=4
+                    ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.004..0.004 rows=8 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.002..0.002 rows=8 loops=1)
+                                Buffers: shared hit=1
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=16) (actual time=1.151..1.151 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 632kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=16) (actual time=0.002..0.720 rows=10000 loops=1)
+                          Buffers: shared hit=203
+        ->  Hash  (cost=1.30..1.30 rows=30 width=11) (actual time=0.009..0.009 rows=30 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 10kB
+              Buffers: shared hit=1
+              ->  Seq Scan on cities c  (cost=0.00..1.30 rows=30 width=11) (actual time=0.004..0.005 rows=30 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=678
+Planning Time: 1.313 ms
+Execution Time: 23.721 ms
+
+=== R4 run 3 ===
+Sort  (cost=3818.47..3863.47 rows=18001 width=84) (actual time=19.866..20.203 rows=18000 loops=1)
+  Sort Key: pl.listing_date DESC
+  Sort Method: quicksort  Memory: 2673kB
+  Buffers: shared hit=1056
+  ->  Hash Join  (cost=1550.05..2546.18 rows=18001 width=84) (actual time=5.995..16.104 rows=18000 loops=1)
+        Hash Cond: (u.city_id = c.city_id)
+        Buffers: shared hit=1053
+        ->  Hash Join  (cost=1548.38..2490.58 rows=18001 width=81) (actual time=5.982..14.779 rows=18000 loops=1)
+              Hash Cond: (pl.seller_id = u.user_id)
+              Buffers: shared hit=1052
+              ->  Hash Join  (cost=1120.38..2015.30 rows=18001 width=73) (actual time=4.646..11.784 rows=18000 loops=1)
+                    Hash Cond: (pm.brand_id = b.brand_id)
+                    Buffers: shared hit=849
+                    ->  Hash Join  (cost=1119.20..1941.84 rows=18001 width=71) (actual time=4.636..10.492 rows=18000 loops=1)
+                          Hash Cond: (pl.model_id = pm.model_id)
+                          Buffers: shared hit=848
+                          ->  Hash Join  (cost=1108.00..1882.76 rows=18001 width=58) (actual time=4.598..8.974 rows=18000 loops=1)
+                                Hash Cond: (p.listing_id = pl.listing_id)
+                                Buffers: shared hit=844
+                                ->  Seq Scan on pricing p  (cost=0.00..696.00 rows=30001 width=14) (actual time=0.003..1.716 rows=30000 loops=1)
+                                      Filter: is_current
+                                      Rows Removed by Filter: 6000
+                                      Buffers: shared hit=336
+                                ->  Hash  (cost=883.00..883.00 rows=18000 width=48) (actual time=4.577..4.578 rows=18000 loops=1)
+                                      Buckets: 32768  Batches: 1  Memory Usage: 1741kB
+                                      Buffers: shared hit=508
+                                      ->  Seq Scan on phone_listings pl  (cost=0.00..883.00 rows=18000 width=48) (actual time=0.002..2.788 rows=18000 loops=1)
+                                            Filter: ((status)::text = 'available'::text)
+                                            Rows Removed by Filter: 12000
+                                            Buffers: shared hit=508
+                          ->  Hash  (cost=7.20..7.20 rows=320 width=21) (actual time=0.035..0.035 rows=320 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 26kB
+                                Buffers: shared hit=4
+                                ->  Seq Scan on phone_models pm  (cost=0.00..7.20 rows=320 width=21) (actual time=0.003..0.018 rows=320 loops=1)
+                                      Buffers: shared hit=4
+                    ->  Hash  (cost=1.08..1.08 rows=8 width=10) (actual time=0.005..0.005 rows=8 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on brands b  (cost=0.00..1.08 rows=8 width=10) (actual time=0.003..0.004 rows=8 loops=1)
+                                Buffers: shared hit=1
+              ->  Hash  (cost=303.00..303.00 rows=10000 width=16) (actual time=1.325..1.325 rows=10000 loops=1)
+                    Buckets: 16384  Batches: 1  Memory Usage: 632kB
+                    Buffers: shared hit=203
+                    ->  Seq Scan on users u  (cost=0.00..303.00 rows=10000 width=16) (actual time=0.002..0.785 rows=10000 loops=1)
+                          Buffers: shared hit=203
+        ->  Hash  (cost=1.30..1.30 rows=30 width=11) (actual time=0.010..0.010 rows=30 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 10kB
+              Buffers: shared hit=1
+              ->  Seq Scan on cities c  (cost=0.00..1.30 rows=30 width=11) (actual time=0.004..0.005 rows=30 loops=1)
+                    Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=678
+Planning Time: 1.406 ms
+Execution Time: 21.090 ms
+
